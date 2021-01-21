@@ -83,3 +83,6 @@ flutter:
     - family: Quicksand
       fonts:
         - asset: assets/fonts/Quicksand-Regular.ttf
+    - family: Pacifico-Regular
+      fonts:
+        - asset: assets/fonts/Pacifico-Regular.ttf
