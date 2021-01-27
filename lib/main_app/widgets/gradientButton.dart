@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_svg/flutter_svg.dart';
+
 @immutable
 class GradientButton extends StatelessWidget {
   final IconData icon;
+  final String svgIcon;
   final Color iconColor;
   final double radius;
   final List<Color> gradientColors;
@@ -23,12 +26,13 @@ class GradientButton extends StatelessWidget {
 
   const GradientButton(
       {Key key,
+      this.svgIcon,
       this.mini = false,
       this.radius = 4.0,
       this.elevation = 1.8,
       this.textColor = Colors.white,
       this.iconColor = Colors.white,
-        this.borderColor,
+      this.borderColor,
       this.iconSize,
       this.width,
       this.height,
@@ -54,7 +58,7 @@ class GradientButton extends StatelessWidget {
 
   BoxDecoration get boxDecoration => BoxDecoration(
       gradient: linearGradient,
-      border: Border.all(color: borderColor??Colors.transparent),
+      border: Border.all(color: borderColor ?? Colors.transparent),
       borderRadius: BorderRadius.circular(radius),
       color: background ?? Colors.black);
 
@@ -67,21 +71,27 @@ class GradientButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FlatButton(
-      shape:
-          RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(radius),
-          ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(radius),
+      ),
       onPressed: onPressed,
       child: mini
           ? Container(
               decoration: boxDecoration,
               width: width ?? 65.0,
               height: width ?? 65.0,
-              child: Icon(
-                icon,
-                color: iconColor ?? Colors.white,
-                size: iconSize ?? 60,
-              ),
+              child: icon != null
+                  ? Icon(
+                      icon,
+                      size: iconSize ?? 60,
+                    )
+                  : Center(
+                    child: SvgPicture.asset(
+                      svgIcon,
+                      color: iconColor ?? Colors.white,
+                      width: iconSize ?? 60,
+                    ),
+                  ),
             )
           : Container(
               width: width ?? 165.0,
@@ -99,7 +109,8 @@ class GradientButton extends StatelessWidget {
                   if (icon != null)
                     Icon(
                       icon,
-                      color: Colors.white,
+                      color: iconColor ?? Colors.white,
+                      size: iconSize ?? 60,
                     ),
                 ],
               ),
