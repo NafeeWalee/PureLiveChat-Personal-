@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 @immutable
@@ -86,11 +86,15 @@ class GradientButton extends StatelessWidget {
                       size: iconSize ?? 60,
                     )
                   : Center(
-                    child: SvgPicture.asset(
+                    child: CachedNetworkImage(
+                      imageUrl: "https://midnightoilstudios.files.wordpress.com/2017/10/1200px-yin_yang-svg.png",
+                    ),
+
+                /*SvgPicture.asset(
                       svgIcon,
                       color: iconColor ?? Colors.white,
                       width: iconSize ?? 60,
-                    ),
+                    )*/
                   ),
             )
           : Container(

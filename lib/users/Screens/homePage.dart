@@ -14,7 +14,7 @@ import 'package:pure_live_chat/main_app/widgets/gradientButton.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:pure_live_chat/main_app/widgets/lightTextField.dart';
 import 'package:pure_live_chat/main_app/widgets/orDivider.dart';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 class HomePage extends StatefulWidget {
   @override
@@ -51,8 +51,18 @@ class _HomePageState extends State<HomePage>
     } else {
       super.initState();
       setInitialScreenSize();
-      initConnectivity();
-      _connectivitySubscription = _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+      if ((defaultTargetPlatform == TargetPlatform.iOS) || (defaultTargetPlatform == TargetPlatform.android)) {
+        initConnectivity();
+        _connectivitySubscription = _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+
+      }
+      else if ((defaultTargetPlatform == TargetPlatform.linux) || (defaultTargetPlatform == TargetPlatform.macOS) || (defaultTargetPlatform == TargetPlatform.windows)) {
+        // Some desktop specific code there
+      }
+      else {
+        // Some web specific code there
+      }
+
      // translateController = AnimationController(duration: Duration(milliseconds: 500), vsync: this);
     }
   }
@@ -60,7 +70,7 @@ class _HomePageState extends State<HomePage>
   @override
   void dispose() {
    // translateController.dispose();
-    _connectivitySubscription.cancel();
+    _connectivitySubscription?.cancel();
     super.dispose();
     username.dispose();
     password.dispose();
@@ -208,7 +218,7 @@ class _HomePageState extends State<HomePage>
                   opacity: .3,
                   child: CachedNetworkImage(
                     height: Get.height,
-                    fit: BoxFit.fitHeight,
+                    fit: BoxFit.fill,
                     imageUrl:
                     'https://images.unsplash.com/photo-1606613992706-02a0f77643f4?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80',
                    // 'https://i.pinimg.com/originals/ae/9f/4d/ae9f4dc00d333cf0f5a1d56bb50bcbc7.jpg',
@@ -218,8 +228,7 @@ class _HomePageState extends State<HomePage>
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(
-                  top: height * 70, left: width * 50, right: width * 50,bottom: height*30),
+              padding: EdgeInsets.only(left: width * 50, right: width * 50,bottom: height*30),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -349,7 +358,7 @@ class _HomePageState extends State<HomePage>
                       gradientStartDirection: Alignment.topCenter,
                       gradientEndDirection: Alignment.bottomCenter,
                     ),
-                    Padding(
+                  /*  Padding(
                       padding: EdgeInsets.symmetric(vertical: height * 20),
                       child: Divider(
                         color: Colors.white60,
@@ -365,7 +374,7 @@ class _HomePageState extends State<HomePage>
                           fontSize: getSizeConfig.getPixels(18),
                           fontWeight: FontWeight.normal,
                           color: Colors.white60),
-                    ),
+                    ),*/
                   ],
                 );
   }
