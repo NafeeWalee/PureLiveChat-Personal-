@@ -8,20 +8,19 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/services.dart';
 import 'package:connectivity/connectivity.dart';
 import 'dart:async';
-
-import 'package:pure_live_chat/main_app/utils/controller/sizeConfig.dart';
-import 'package:pure_live_chat/main_app/widgets/gradientButton.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:pure_live_chat/main_app/widgets/lightTextField.dart';
-import 'package:pure_live_chat/main_app/widgets/orDivider.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-class HomePage extends StatefulWidget {
+import 'package:pure_live_chat/utility/controller/sizeConfig.dart';
+import 'package:pure_live_chat/utility/widgets/gradientButton.dart';
+import 'package:pure_live_chat/utility/widgets/lightTextField.dart';
+import 'package:pure_live_chat/utility/widgets/orDivider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
+class LoginPage extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _HomePageState extends State<HomePage>
+class _LoginPageState extends State<LoginPage>
     with AutomaticKeepAliveClientMixin,TickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
@@ -202,7 +201,7 @@ class _HomePageState extends State<HomePage>
         return Future.value(null);
       },
       child: Scaffold(
-        resizeToAvoidBottomPadding: false,
+        resizeToAvoidBottomInset: false,
         body: Stack(
           children: [
             ImageFiltered(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pure_live_chat/main_app/utils/controller/sizeConfig.dart';
 import 'package:get/get.dart';
+import 'package:pure_live_chat/utility/controller/sizeConfig.dart';
 
 class OrDivider extends StatelessWidget {
   final String text;

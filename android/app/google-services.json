@@ -1,64 +1,20 @@
 {
   "project_info": {
-    "project_number": "573355825174",
-    "project_id": "cloud-function-2df6c",
-    "storage_bucket": "cloud-function-2df6c.appspot.com"
+    "project_number": "107998770854",
+    "project_id": "purelivechat",
+    "storage_bucket": "purelivechat.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:573355825174:android:32ac6700a5e003115abd37",
-        "android_client_info": {
-          "package_name": "com.pure.backgroundservices"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "573355825174-3052ajq8bvcn7f3j3rp41p34l86dhb96.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.pure.backgroundservices",
-            "certificate_hash": "630413562ac9b5c40e6ae3d998300729b665a774"
-          }
-        },
-        {
-          "client_id": "573355825174-tna6afvif8731f6687ffub3g3hv8hnge.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyABT75tkOLwlY_uQfTRIzrV4ZGMefKK0bw"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "573355825174-tna6afvif8731f6687ffub3g3hv8hnge.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "573355825174-fgrog3qcidoacl1pj96u67lhe5mq6veg.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.pure.backgroundservices"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:573355825174:android:73aa82c4c7be2ed25abd37",
+        "mobilesdk_app_id": "1:107998770854:android:a880f8467e549d97dc2667",
         "android_client_info": {
           "package_name": "pure.firebase.chat"
         }
       },
       "oauth_client": [
         {
-          "client_id": "573355825174-mi4nk236rhuhl4mq3o1nhfjtkbe6s4pr.apps.googleusercontent.com",
+          "client_id": "107998770854-ahlmh38f76s1rnn0t5027ula1mv19bf0.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "pure.firebase.chat",
@@ -66,28 +22,21 @@
           }
         },
         {
-          "client_id": "573355825174-tna6afvif8731f6687ffub3g3hv8hnge.apps.googleusercontent.com",
+          "client_id": "107998770854-vpgi23l1mdj36uk56m007anqqrc842cm.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyABT75tkOLwlY_uQfTRIzrV4ZGMefKK0bw"
+          "current_key": "AIzaSyDfa1yEAqmFkgUi2QibLrhoRG1M_JTJmkM"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "573355825174-tna6afvif8731f6687ffub3g3hv8hnge.apps.googleusercontent.com",
+              "client_id": "107998770854-vpgi23l1mdj36uk56m007anqqrc842cm.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "573355825174-fgrog3qcidoacl1pj96u67lhe5mq6veg.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.pure.backgroundservices"
-              }
             }
           ]
         }

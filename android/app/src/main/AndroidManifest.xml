@@ -8,9 +8,7 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-
     <application
-
         android:name="io.flutter.app.FlutterApplication"
         android:label="PureLive"
         android:icon="@mipmap/ic_launcher">
