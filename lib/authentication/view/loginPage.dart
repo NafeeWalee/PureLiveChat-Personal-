@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:connectivity/connectivity.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:pure_live_chat/main_app/homePage/view/homePage.dart';
 import 'package:pure_live_chat/utility/controller/sizeConfig.dart';
 import 'package:pure_live_chat/utility/widgets/gradientButton.dart';
 import 'package:pure_live_chat/utility/widgets/lightTextField.dart';
@@ -26,22 +27,20 @@ class _LoginPageState extends State<LoginPage>
   bool get wantKeepAlive => true;
 
   GetSizeConfig getSizeConfig = Get.find();
-  double width;
-  double height;
+  double? width;
+  double? height;
   bool _switchValue = false;
-  bool hasConnection;
-  Future _dialog;
+  bool? hasConnection;
+  Future? _dialog;
   var currentStatus;
   final Connectivity _connectivity = Connectivity();
-  StreamSubscription<ConnectivityResult> _connectivitySubscription;
+  StreamSubscription<ConnectivityResult>? _connectivitySubscription;
 
   bool crossFade = true;
 
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
 
- // AnimationController translateController;
- // Animation<double> animationTranslate;
 
   @override
   void initState() {
@@ -55,28 +54,21 @@ class _LoginPageState extends State<LoginPage>
         _connectivitySubscription = _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
 
       }
-      else if ((defaultTargetPlatform == TargetPlatform.linux) || (defaultTargetPlatform == TargetPlatform.macOS) || (defaultTargetPlatform == TargetPlatform.windows)) {
+      else if ((defaultTargetPlatform == TargetPlatform.linux) || (defaultTargetPlatform == TargetPlatform.macOS) || (defaultTargetPlatform == TargetPlatform.windows) ) {
         // Some desktop specific code there
       }
       else {
         // Some web specific code there
       }
-
-     // translateController = AnimationController(duration: Duration(milliseconds: 500), vsync: this);
     }
   }
 
   @override
   void dispose() {
-   // translateController.dispose();
     _connectivitySubscription?.cancel();
-    super.dispose();
     username.dispose();
     password.dispose();
-  }
-
-  void _startAnimation() {
-   // translateController.forward();
+    super.dispose();
   }
 
   setInitialScreenSize() {
@@ -88,14 +80,13 @@ class _LoginPageState extends State<LoginPage>
           (Get.mediaQuery.padding.top + Get.mediaQuery.padding.bottom)) /
           1000,
     );
-
     width = getSizeConfig.width.value;
     height = getSizeConfig.height.value;
 
   }
 
   Future initConnectivity() async {
-    ConnectivityResult result;
+    ConnectivityResult? result;
     try {
       result = await _connectivity.checkConnectivity();
     } on PlatformException catch (e) {
@@ -125,18 +116,17 @@ class _LoginPageState extends State<LoginPage>
         print(currentStatus.toString());
         break;
     }
-    var connection = await checkConnection();
+    var connection = await (checkConnection() as FutureOr<bool>);
     if (!connection) {
       Get.snackbar('Connection Issue', 'Fluctuating Network Detected!',
           backgroundColor: Colors.black,
           colorText: Colors.white,
           margin: EdgeInsets.only(
-              bottom: height * 20, left: width * 15, right: width * 15),
+              bottom: height! * 20, left: width! * 15, right: width! * 15),
           snackPosition: SnackPosition.BOTTOM);
     } else {
-      // print('123');
-      // Get.snackbar('Connected to Network', 'Internet Connection Established!',backgroundColor: Colors.black,colorText: Colors.white,
-      //     margin: EdgeInsets.only(bottom: height*20,left: width*15,right:width*15),snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar('Connected to Network', 'Internet Connection Established!',backgroundColor: Colors.black,colorText: Colors.white,
+          margin: EdgeInsets.only(bottom: height!*20,left: width!*15,right:width!*15),snackPosition: SnackPosition.BOTTOM);
     }
     print('init result: ${currentStatus.toString()}');
   }
@@ -175,7 +165,7 @@ class _LoginPageState extends State<LoginPage>
     ).show();
   }
 
-  Future<bool> checkConnection() async {
+  Future<bool?> checkConnection() async {
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
@@ -194,8 +184,6 @@ class _LoginPageState extends State<LoginPage>
   Widget build(BuildContext context) {
     super.build(context);
 
-  // animationTranslate = Tween(begin: height * 100, end: height*5).animate(translateController);
-   // print(animationTranslate);
     return WillPopScope(
       onWillPop: () async {
         return Future.value(null);
@@ -227,7 +215,7 @@ class _LoginPageState extends State<LoginPage>
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(left: width * 50, right: width * 50,bottom: height*30),
+              padding: EdgeInsets.only(left: width! * 50, right: width! * 50,bottom: height!*30),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -239,14 +227,18 @@ class _LoginPageState extends State<LoginPage>
                       duration: Duration(milliseconds: 500)),
 
                   GradientButton(
-                    width: width * 1000,
-                    height: height * 80,
-                    radius: width * 100,
+                    width: width! * 1000,
+                    height: height! * 80,
+                    radius: width! * 100,
                     onPressed: () {
-                      _startAnimation();
-                      setState(() {
-                        crossFade = !crossFade;
-                      });
+                      if(crossFade){
+                        setState(() {
+                          crossFade = !crossFade;
+                        });
+                      }else{
+                        Get.to(HomePage());
+                      }
+
                     },
                     gradientColors: [Color(0xffE8AA4F), Color(0xffED5369)],
                     text: 'Login',
@@ -277,7 +269,7 @@ class _LoginPageState extends State<LoginPage>
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(
-          height: height * 50,
+          height: height! * 50,
         ),
         icon(iconWidth: 300,iconHeight: 270),
         Text(
@@ -290,7 +282,7 @@ class _LoginPageState extends State<LoginPage>
         ),
         Container(
           alignment: Alignment.center,
-          width: width * 800,
+          width: width! * 800,
           child: Text(
             'Memories ... \n Are Like Shadows In The Fog',
             textAlign: TextAlign.center,
@@ -301,18 +293,18 @@ class _LoginPageState extends State<LoginPage>
                 color: Colors.white60),
           ),
         ),
-        SizedBox(height: height*160,),
+        SizedBox(height: height!*160,),
       ],
     );
   }
 
-  icon({iconWidth,iconHeight}) {
+  icon({required iconWidth,required iconHeight}) {
     return Padding(
-        padding: EdgeInsets.symmetric(vertical: height * 30),
+        padding: EdgeInsets.symmetric(vertical: height! * 30),
         child: GradientButton(
           mini: true,
-          radius: width * iconWidth,
-          width: width * iconHeight,
+          radius: width! * iconWidth,
+          width: width! * iconHeight,
           svgIcon: 'assets/images/pawprint.svg',
           // icon: Icons.whatshot_outlined,
           iconColor: Colors.white,
@@ -332,23 +324,23 @@ class _LoginPageState extends State<LoginPage>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: height * 20),
+                      padding: EdgeInsets.symmetric(vertical: height! * 20),
                       child: OrDivider(
                         text: 'OR',
                         textStyle: 'Pacifico-Regular',
-                        leftIndent: width * 180,
-                        leftEndIndent: width * 40,
-                        rightIndent: width * 40,
-                        rightEndIndent: width * 180,
+                        leftIndent: width! * 180,
+                        leftEndIndent: width! * 40,
+                        rightIndent: width! * 40,
+                        rightEndIndent: width! * 180,
                         dividerColor: Colors.white60,
                         fontColor: Colors.white60,
                         fontSize: getSizeConfig.getPixels(18),
                       ),
                     ),
                     GradientButton(
-                      width: width * 1000,
-                      height: height * 80,
-                      radius: width * 100,
+                      width: width! * 1000,
+                      height: height! * 80,
+                      radius: width! * 100,
                       onPressed: () {},
                       borderColor: Colors.white,
                       background: Colors.transparent,
@@ -386,7 +378,7 @@ class _LoginPageState extends State<LoginPage>
           children: [
             icon(iconWidth: 150,iconHeight: 130),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: height * 20),
+              padding: EdgeInsets.symmetric(vertical: height! * 20),
               child: Text(
                 'Login',
                 style: TextStyle(
@@ -396,12 +388,12 @@ class _LoginPageState extends State<LoginPage>
                     color: Colors.white),
               ),
             ),
-            SizedBox(width: width*150,)
+            SizedBox(width: width!*150,)
           ],
         ),
         Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: width * 60, vertical: height * 15),
+              horizontal: width! * 60, vertical: height! * 15),
           child: LightTextField(
             controller: username,
             hintText: 'Username',
@@ -411,7 +403,7 @@ class _LoginPageState extends State<LoginPage>
         ),
         Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: width * 60, vertical: height * 15),
+              horizontal: width! * 60, vertical: height! * 15),
           child: LightTextField(
             controller: password,
             hintText: 'Password',
@@ -421,7 +413,7 @@ class _LoginPageState extends State<LoginPage>
         ),
         Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: width * 30),
+              horizontal: width! * 30),
           child: Row(
             children: [
               Transform.scale(
@@ -460,25 +452,25 @@ class _LoginPageState extends State<LoginPage>
       children: [
 
         Padding(
-          padding: EdgeInsets.symmetric(vertical: height * 20),
+          padding: EdgeInsets.symmetric(vertical: height! * 20),
           child: OrDivider(
             text: 'OR',
             textStyle: 'Pacifico-Regular',
-            leftIndent: width * 180,
-            leftEndIndent: width * 40,
-            rightIndent: width * 40,
-            rightEndIndent: width * 180,
+            leftIndent: width! * 180,
+            leftEndIndent: width! * 40,
+            rightIndent: width! * 40,
+            rightEndIndent: width! * 180,
             dividerColor: Colors.white60,
             fontColor: Colors.white60,
             fontSize: getSizeConfig.getPixels(18),
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(vertical: height * 20),
+          padding: EdgeInsets.symmetric(vertical: height! * 20),
           child: GradientButton(
-            width: width * 1000,
-            height: height * 80,
-            radius: width * 100,
+            width: width! * 1000,
+            height: height! * 80,
+            radius: width! * 100,
             onPressed: () {
             },
             gradientColors: [Color(0xff596FF3), Color(0xff4555B7)],
@@ -489,11 +481,11 @@ class _LoginPageState extends State<LoginPage>
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(vertical: height * 20),
+          padding: EdgeInsets.symmetric(vertical: height! * 20),
           child: GradientButton(
-            width: width * 1000,
-            height: height * 80,
-            radius: width * 100,
+            width: width! * 1000,
+            height: height! * 80,
+            radius: width! * 100,
             onPressed: () {},
             borderColor: Colors.white,
             background: Colors.transparent,

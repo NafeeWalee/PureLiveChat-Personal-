@@ -3,28 +3,28 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 @immutable
 class GradientButton extends StatelessWidget {
-  final IconData icon;
-  final String svgIcon;
+  final IconData? icon;
+  final String? svgIcon;
   final Color iconColor;
   final double radius;
   final List<Color> gradientColors;
   final String text;
   final Color textColor;
-  final Color background;
-  final Color borderColor;
-  final double width;
-  final double height;
-  final double iconSize;
-  final Function onPressed;
+  final Color? background;
+  final Color? borderColor;
+  final double? width;
+  final double? height;
+  final double? iconSize;
+  final Function? onPressed;
   final double elevation;
   final bool mini;
   final double fontSize;
-  final Alignment gradientStartDirection;
-  final Alignment gradientEndDirection;
-  final String textFontFamily;
+  final Alignment? gradientStartDirection;
+  final Alignment? gradientEndDirection;
+  final String? textFontFamily;
 
   const GradientButton(
-      {Key key,
+      {Key? key,
       this.svgIcon,
       this.mini = false,
       this.radius = 4.0,
@@ -36,8 +36,8 @@ class GradientButton extends StatelessWidget {
       this.width,
       this.height,
       this.textFontFamily,
-      @required this.onPressed,
-      @required this.text,
+      required this.onPressed,
+      required this.text,
       this.background,
       this.gradientColors = const [],
       this.icon,
@@ -53,7 +53,7 @@ class GradientButton extends StatelessWidget {
           colors: gradientColors,
           begin: gradientStartDirection ?? Alignment.topLeft,
           end: gradientEndDirection ?? Alignment.topRight)
-      : LinearGradient(colors: [background, background]);
+      : LinearGradient(colors: [background!, background!]);
 
   BoxDecoration get boxDecoration => BoxDecoration(
       gradient: linearGradient,
@@ -69,11 +69,9 @@ class GradientButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(radius),
-      ),
-      onPressed: onPressed,
+    return TextButton(
+      style: TextButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius),),),
+      onPressed: onPressed as void Function()?,
       child: mini
           ? Container(
               decoration: boxDecoration,
@@ -106,7 +104,7 @@ class GradientButton extends StatelessWidget {
                   if (icon != null)
                     Icon(
                       icon,
-                      color: iconColor ?? Colors.white,
+                      color: iconColor,
                       size: iconSize ?? 60,
                     ),
                 ],

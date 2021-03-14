@@ -19,7 +19,7 @@ class InitApp extends StatelessWidget {
                   child: Text('Video Room'),
                   style: TextButton.styleFrom(backgroundColor: Colors.red),
                   onPressed: () {
-                      Get.to(()=>LoginPage());
+                    Get.to(()=>LoginPage());
                   },
                 )
               ],
