@@ -64,7 +64,7 @@ class UserProfileDataRepository{
       await checkInErrors.add({
         'userId': '${userDataController.userData.value!.userID}',
         'userName': '${userDataController.userData.value!.userName}',
-        'message': qrCode == null ? 'No QR code scanned' : 'Wrong QR code > $qrCode',
+        'message': qrCode != null? 'No QR code scanned' : 'Wrong QR code > $qrCode',
         'timeStamp': Timestamp.now()
       });
     }catch(e){

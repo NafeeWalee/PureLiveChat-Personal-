@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:pure_live_chat/main_app/homePage/view/homePage.dart';
 
-import '../main.dart';
 
 class Item {
   Item({this.itemId});

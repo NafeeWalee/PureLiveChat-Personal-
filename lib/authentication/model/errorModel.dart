@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ErrorModel{
-  String message;
-  Timestamp timestamp;
+  String? message;
+  Timestamp? timestamp;
 
   ErrorModel({
     required this.message,

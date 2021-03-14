@@ -9,7 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:connectivity/connectivity.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:pure_live_chat/main_app/homePage/view/homePage.dart';
+import 'package:pure_live_chat/authentication/repo/authRepo.dart';
 import 'package:pure_live_chat/utility/controller/sizeConfig.dart';
 import 'package:pure_live_chat/utility/widgets/gradientButton.dart';
 import 'package:pure_live_chat/utility/widgets/lightTextField.dart';
@@ -26,6 +26,7 @@ class _LoginPageState extends State<LoginPage>
   @override
   bool get wantKeepAlive => true;
 
+
   GetSizeConfig getSizeConfig = Get.find();
   double? width;
   double? height;
@@ -40,6 +41,9 @@ class _LoginPageState extends State<LoginPage>
 
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
+  bool rememberMe = false;
+
+
 
 
   @override
@@ -116,7 +120,7 @@ class _LoginPageState extends State<LoginPage>
         print(currentStatus.toString());
         break;
     }
-    var connection = await (checkConnection() as FutureOr<bool>);
+    bool connection = (await checkConnection())!;
     if (!connection) {
       Get.snackbar('Connection Issue', 'Fluctuating Network Detected!',
           backgroundColor: Colors.black,
@@ -180,6 +184,7 @@ class _LoginPageState extends State<LoginPage>
     return hasConnection;
   }
 
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -208,14 +213,14 @@ class _LoginPageState extends State<LoginPage>
                     fit: BoxFit.fill,
                     imageUrl:
                     'https://images.unsplash.com/photo-1606613992706-02a0f77643f4?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80',
-                   // 'https://i.pinimg.com/originals/ae/9f/4d/ae9f4dc00d333cf0f5a1d56bb50bcbc7.jpg',
+                    // 'https://i.pinimg.com/originals/ae/9f/4d/ae9f4dc00d333cf0f5a1d56bb50bcbc7.jpg',
                     //imageUrl: 'https://cutewallpaper.org/21/naruto-itachi-wallpaper-mobile/Uchiha-Itachi-Itachi-Uchiha-Akatsuki-Naruto-Love-.png',
                   ),
                 ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(left: width! * 50, right: width! * 50,bottom: height!*30),
+              padding: EdgeInsets.only(left: width! * 50, right: width! * 50),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -224,36 +229,49 @@ class _LoginPageState extends State<LoginPage>
                       firstChild: upperSide(),
                       secondChild: loginUpperSide(),
                       crossFadeState: crossFade?CrossFadeState.showFirst:CrossFadeState.showSecond,
-                      duration: Duration(milliseconds: 500)),
+                      duration: Duration(milliseconds: 200)),
 
-                  GradientButton(
-                    width: width! * 1000,
-                    height: height! * 80,
-                    radius: width! * 100,
-                    onPressed: () {
-                      if(crossFade){
-                        setState(() {
-                          crossFade = !crossFade;
-                        });
-                      }else{
-                        Get.to(HomePage());
-                      }
-
-                    },
-                    gradientColors: [Color(0xffE8AA4F), Color(0xffED5369)],
-                    text: 'Login',
-                    textFontFamily: 'PermanentMarker-Regular',
-                    gradientStartDirection: Alignment.topCenter,
-                    gradientEndDirection: Alignment.bottomCenter,
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GradientButton(
+                        width: width! * 1000,
+                        height: height! * 80,
+                        radius: width! * 100,
+                        onPressed: () async {
+                          if(crossFade){
+                            setState(() {
+                              crossFade = !crossFade;
+                            });
+                          }else{
+                            var hasException =  await AuthRepo().login(username.text, password.text,rememberMe);
+                            if(hasException != null){
+                              setState(() {
+                                //isLoading = false;
+                              });
+                              Get.snackbar('Error', hasException);
+                            }
+                          }
+                        },
+                        gradientColors: [Color(0xff1E1E1F), Color(0xff4C4D51)],
+                        text: 'Login',
+                        textFontFamily: 'PermanentMarker-Regular',
+                        gradientStartDirection: Alignment.topCenter,
+                        gradientEndDirection: Alignment.bottomCenter,
+                      ),
+                    ],
                   ),
-                  !crossFade?SizedBox():Container(),
-                  !crossFade?SizedBox():Container(),
-
+                  !crossFade?SizedBox(height: Get.height/30,):Container(),
                   AnimatedCrossFade(
                       firstChild: lowerSide(),
                       secondChild: registerLowerSide(),
                       crossFadeState: crossFade?CrossFadeState.showFirst:CrossFadeState.showSecond,
-                      duration: Duration(milliseconds: 500)),
+                      firstCurve: Curves.linear,
+                      secondCurve: Curves.linear,
+                      duration: Duration(milliseconds: 400)),
+                  SizedBox(height: Get.height/120,)
                 ],
               ),
             ),
@@ -273,7 +291,7 @@ class _LoginPageState extends State<LoginPage>
         ),
         icon(iconWidth: 300,iconHeight: 270),
         Text(
-          'PURE',
+          'Welcome',
           style: TextStyle(
               fontFamily: 'PermanentMarker-Regular',
               fontSize: getSizeConfig.getPixels(36),
@@ -282,97 +300,102 @@ class _LoginPageState extends State<LoginPage>
         ),
         Container(
           alignment: Alignment.center,
-          width: width! * 800,
+          width: width! * 1000,
           child: Text(
-            'Memories ... \n Are Like Shadows In The Fog',
+            'Connect your words around the world',
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontFamily: 'Pacifico-Regular',
                 fontSize: getSizeConfig.getPixels(20),
                 fontWeight: FontWeight.normal,
-                color: Colors.white60),
+                color: Colors.white),
           ),
         ),
-        SizedBox(height: height!*160,),
+        SizedBox(height: height!*100,),
       ],
     );
   }
 
-  icon({required iconWidth,required iconHeight}) {
+  icon({iconWidth,iconHeight}) {
     return Padding(
-        padding: EdgeInsets.symmetric(vertical: height! * 30),
-        child: GradientButton(
-          mini: true,
-          radius: width! * iconWidth,
-          width: width! * iconHeight,
-          svgIcon: 'assets/images/pawprint.svg',
-          // icon: Icons.whatshot_outlined,
-          iconColor: Colors.white,
-          iconSize: getSizeConfig.getPixels(iconWidth/(5)),
-          onPressed: null,
-          gradientColors: [Color(0xffE8AA4F), Color(0xffED5369)],
-          text: '',
-          gradientStartDirection: Alignment.topCenter,
-          gradientEndDirection: Alignment.bottomCenter,
-        ),
-      );
+      padding: EdgeInsets.symmetric(vertical: height! * 30),
+      child: GradientButton(
+        mini: true,
+        radius: width! * iconWidth,
+        width: width! * iconHeight,
+        svgIcon: 'assets/images/pawprint.svg',
+        // icon: Icons.whatshot_outlined,
+        iconColor: Colors.white,
+        iconSize: getSizeConfig.getPixels(iconWidth/(5)),
+        onPressed: null,
+        gradientColors: [Color(0xffE8AA4F), Color(0xffED5369)],
+        text: '',
+        gradientStartDirection: Alignment.topCenter,
+        gradientEndDirection: Alignment.bottomCenter,
+      ),
+    );
   }
 
   Column lowerSide() {
     return Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: height! * 20),
-                      child: OrDivider(
-                        text: 'OR',
-                        textStyle: 'Pacifico-Regular',
-                        leftIndent: width! * 180,
-                        leftEndIndent: width! * 40,
-                        rightIndent: width! * 40,
-                        rightEndIndent: width! * 180,
-                        dividerColor: Colors.white60,
-                        fontColor: Colors.white60,
-                        fontSize: getSizeConfig.getPixels(18),
-                      ),
-                    ),
-                    GradientButton(
-                      width: width! * 1000,
-                      height: height! * 80,
-                      radius: width! * 100,
-                      onPressed: () {},
-                      borderColor: Colors.white,
-                      background: Colors.transparent,
-                      text: 'Sign Up',
-                      textFontFamily: 'PermanentMarker-Regular',
-                      gradientStartDirection: Alignment.topCenter,
-                      gradientEndDirection: Alignment.bottomCenter,
-                    ),
-                  /*  Padding(
-                      padding: EdgeInsets.symmetric(vertical: height * 20),
-                      child: Divider(
-                        color: Colors.white60,
-                        indent: width * 100,
-                        endIndent: width * 100,
-                        thickness: width * 5,
-                      ),
-                    ),
-                    Text(
-                      'MADE BY WALEE,  V 1.0',
-                      style: TextStyle(
-                          fontFamily: 'Quicksand',
-                          fontSize: getSizeConfig.getPixels(18),
-                          fontWeight: FontWeight.normal,
-                          color: Colors.white60),
-                    ),*/
-                  ],
-                );
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: height! * 20),
+          child: OrDivider(
+            text: 'OR',
+            textStyle: 'Pacifico-Regular',
+            leftIndent: width! * 180,
+            leftEndIndent: width! * 40,
+            rightIndent: width! * 40,
+            rightEndIndent: width! * 180,
+            dividerColor: Colors.white60,
+            fontColor: Colors.white60,
+            fontSize: getSizeConfig.getPixels(18),
+          ),
+        ),
+        GradientButton(
+          width: width! * 1000,
+          height: height! * 80,
+          radius: width! * 100,
+          onPressed: () {},
+          borderColor: Colors.white,
+          background: Colors.transparent,
+          text: 'Sign Up',
+          textFontFamily: 'PermanentMarker-Regular',
+          gradientStartDirection: Alignment.topCenter,
+          gradientEndDirection: Alignment.bottomCenter,
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: height! * 20),
+          child: Divider(
+            color: Colors.white60,
+            indent: width! * 100,
+            endIndent: width! * 100,
+            thickness: width! * 5,
+          ),
+        ),
+        Text(
+          'Welcome to PureChat',
+          style: TextStyle(
+              fontFamily: 'Quicksand',
+              fontSize: getSizeConfig.getPixels(18),
+              fontWeight: FontWeight.normal,
+              color: Colors.white60),
+        ),
+      ],
+    );
   }
 
   Column loginUpperSide() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        SizedBox(
+          height: height! * 50,
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -450,7 +473,6 @@ class _LoginPageState extends State<LoginPage>
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
-
         Padding(
           padding: EdgeInsets.symmetric(vertical: height! * 20),
           child: OrDivider(
@@ -473,8 +495,8 @@ class _LoginPageState extends State<LoginPage>
             radius: width! * 100,
             onPressed: () {
             },
-            gradientColors: [Color(0xff596FF3), Color(0xff4555B7)],
-            text: 'Login with Facebook',
+            gradientColors: [Color(0xff596FF3), Color(0xffE34133)],
+            text: 'Login with Google',
             textFontFamily: 'PermanentMarker-Regular',
             gradientStartDirection: Alignment.topCenter,
             gradientEndDirection: Alignment.bottomCenter,
@@ -482,18 +504,20 @@ class _LoginPageState extends State<LoginPage>
         ),
         Padding(
           padding: EdgeInsets.symmetric(vertical: height! * 20),
-          child: GradientButton(
-            width: width! * 1000,
-            height: height! * 80,
-            radius: width! * 100,
-            onPressed: () {},
-            borderColor: Colors.white,
-            background: Colors.transparent,
-            text: 'Sign Up',
-            textFontFamily: 'PermanentMarker-Regular',
-            gradientStartDirection: Alignment.topCenter,
-            gradientEndDirection: Alignment.bottomCenter,
+          child: Divider(
+            color: Colors.white60,
+            indent: width! * 100,
+            endIndent: width! * 100,
+            thickness: width! * 5,
           ),
+        ),
+        Text(
+          'CREATED BY WALEE,  V 1.0',
+          style: TextStyle(
+              fontFamily: 'Quicksand',
+              fontSize: getSizeConfig.getPixels(18),
+              fontWeight: FontWeight.normal,
+              color: Colors.white60),
         ),
       ],
     );

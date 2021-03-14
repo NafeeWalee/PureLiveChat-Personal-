@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:pure_live_chat/authentication/repo/authRepo.dart';
 import 'package:pure_live_chat/fcm/fcm_item.dart';
-import 'package:get/get.dart';
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -112,13 +110,7 @@ class _HomePageState extends State<HomePage> {
             TextButton(
               onPressed: () async {
                 // AuthRepo().createUser(name, email, password, userPhoto, userType, loginType);
-                var hasException =  await AuthRepo().login(emailController.text, passwordController.text,rememberUser);
-                if(hasException != null){
-                  setState(() {
-                    isLoading = false;
-                  });
-                  Get.snackbar('Error', hasException);
-                }
+
                // AuthRepo().createUser(name: 'WALEE',password: '1212',email: 'walee@gmail.com',userType: 'member');
               },
               child: Text('Authenticate'),

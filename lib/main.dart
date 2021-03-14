@@ -3,7 +3,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:pure_live_chat/main_app/homePage/view/homePage.dart';
+import 'package:pure_live_chat/authentication/view/loginPage.dart';
+import 'package:pure_live_chat/authentication/view_model/userDataController.dart';
 import 'package:pure_live_chat/utility/controller/sizeConfig.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -18,7 +19,7 @@ void main() async {
   await GetStorage.init();
   await Firebase.initializeApp();
   Get.put(GetSizeConfig());
-
+  Get.put(UserDataController());
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   runApp(
@@ -37,7 +38,7 @@ void main() async {
             iconTheme: IconThemeData(color: Colors.black),
           )),
 
-      home: HomePage(),
+      home: LoginPage(),
     ),
   );
 }

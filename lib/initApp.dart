@@ -16,7 +16,7 @@ class InitApp extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 TextButton(
-                  child: Text('Video Room'),
+                  child: Text('Chat Room'),
                   style: TextButton.styleFrom(backgroundColor: Colors.red),
                   onPressed: () {
                     Get.to(()=>LoginPage());

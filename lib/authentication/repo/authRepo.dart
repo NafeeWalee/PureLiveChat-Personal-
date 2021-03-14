@@ -29,15 +29,13 @@ class AuthRepo extends GetxController {
         Reference? ref = storage.ref().child("user/${user.user!.uid}");
         UploadTask? uploadTask = ref.putFile(userPhoto!);
         TaskSnapshot? res = await uploadTask;
-        if (res != null) {
-          var photoURL = await res.ref.getDownloadURL();
-          try {
-            await addUserToDatabase(name, email, photoURL, userType, loginType, user.user!.uid);
-          } on FirebaseAuthException catch (e) {
-            //Error on saving data to database
-            logger.i(e.message);
-            return e.message;
-          }
+        var photoURL = await res.ref.getDownloadURL();
+        try {
+          await addUserToDatabase(name, email, photoURL, userType, loginType, user.user!.uid);
+        } on FirebaseAuthException catch (e) {
+          //Error on saving data to database
+          logger.i(e.message);
+          return e.message;
         }
       } on FirebaseAuthException catch (e) {
         //Error on uploading picture to storage
