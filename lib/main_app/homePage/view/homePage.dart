@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:pure_live_chat/authentication/repo/authRepo.dart';
 import 'package:pure_live_chat/fcm/fcm_item.dart';
-
+import 'package:get/get.dart';
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -10,22 +11,16 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   final Map<String, Item> _items = <String, Item>{};
-  int _counter = 0;
   String _homeScreenText = "Waiting for token...";
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
-  Item _itemForMessage(Map<String, dynamic> message) {
-    final dynamic data = message['data'] ?? message;
+  Item _itemForMessage(RemoteMessage message) {
+    final dynamic data = message.data;
     final String itemId = data['id'];
     final Item item = _items.putIfAbsent(itemId, () => Item(itemId: itemId))..status = data['status'];
     return item;
   }
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
 
   Widget _buildDialog(BuildContext context, Item item) {
     return AlertDialog(
@@ -47,7 +42,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _showItemDialog(Map<String, dynamic> message) {
+  void _showItemDialog(RemoteMessage message) {
     showDialog<bool>(
       context: context,
       builder: (_) => _buildDialog(context, _itemForMessage(message)),
@@ -58,7 +53,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _navigateToItemDetail(Map<String, dynamic> message) {
+  void _navigateToItemDetail(RemoteMessage message) {
     final Item item = _itemForMessage(message);
     // Clear away dialogs
     Navigator.popUntil(context, (Route<dynamic> route) => route is PageRoute);
@@ -72,23 +67,24 @@ class _HomePageState extends State<HomePage> {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('Got a message whilst in the foreground!');
       print('Message data: ${message.data}');
-
       if (message.notification != null) {
+        _showItemDialog(message);
         print('Message also contained a notification: ${message.notification}');
       }
     });
 
-
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('A new onMessageOpenedApp event was published!');
-      // Navigator.pushNamed(context, '/message', arguments: MessageArguments(message, true));
+      _navigateToItemDetail(message);
     });
+
 
     _firebaseMessaging.getToken().then((String? token) {
       assert(token != null);
       setState(() {
         _homeScreenText = "Push Messaging token: $token";
       });
+
       print(_homeScreenText);
     });
   }
@@ -102,29 +98,34 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Push Notification'),
       ),
       body: Center(
         child: Column(
-
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'You have pushed the button this many times:',
+              _homeScreenText,
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+            TextButton(
+              onPressed: () async {
+                // AuthRepo().createUser(name, email, password, userPhoto, userType, loginType);
+                var hasException =  await AuthRepo().login(emailController.text, passwordController.text,rememberUser);
+                if(hasException != null){
+                  setState(() {
+                    isLoading = false;
+                  });
+                  Get.snackbar('Error', hasException);
+                }
+               // AuthRepo().createUser(name: 'WALEE',password: '1212',email: 'walee@gmail.com',userType: 'member');
+              },
+              child: Text('Authenticate'),
+            )
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

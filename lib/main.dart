@@ -5,6 +5,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:pure_live_chat/main_app/homePage/view/homePage.dart';
 import 'package:pure_live_chat/utility/controller/sizeConfig.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("Handling a background message: ${message.messageId}");
+}
 
 
 void main() async {
@@ -13,6 +18,9 @@ void main() async {
   await GetStorage.init();
   await Firebase.initializeApp();
   Get.put(GetSizeConfig());
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   runApp(
     GetMaterialApp(
       title: 'Pure International',

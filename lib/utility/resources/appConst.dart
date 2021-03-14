@@ -26,6 +26,8 @@ class AppConst{
       spreadRadius: 5,
       blurRadius: 15
   );
+  static const Color themeBlue = Color(0xff0067BD);
+
 
 /*  static final Widget couponIcon = SvgPicture.asset(
     'assets/images/svg/coupon.svg',
