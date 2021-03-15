@@ -25,6 +25,8 @@ dev_dependencies:
   flutter_dotenv: ^4.0.0-nullsafety.0
   awesome_dialog: ^2.0.0-nullsafety.0
   flutter_svg: ^0.21.0-nullsafety.0
+  image_picker: ^0.7.2+1
+  path: ^1.8.0
 
   #GetX
   get: ^4.0.0-nullsafety.2

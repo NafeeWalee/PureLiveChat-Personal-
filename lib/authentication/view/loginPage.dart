@@ -10,11 +10,13 @@ import 'package:connectivity/connectivity.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:pure_live_chat/authentication/repo/authRepo.dart';
+import 'package:pure_live_chat/authentication/view/registerPage.dart';
 import 'package:pure_live_chat/utility/controller/sizeConfig.dart';
 import 'package:pure_live_chat/utility/widgets/gradientButton.dart';
 import 'package:pure_live_chat/utility/widgets/lightTextField.dart';
 import 'package:pure_live_chat/utility/widgets/orDivider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:pure_live_chat/utility/widgets/loadingScreen.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -25,7 +27,6 @@ class _LoginPageState extends State<LoginPage>
     with AutomaticKeepAliveClientMixin,TickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
-
 
   GetSizeConfig getSizeConfig = Get.find();
   double? width;
@@ -42,9 +43,7 @@ class _LoginPageState extends State<LoginPage>
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
   bool rememberMe = false;
-
-
-
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -195,87 +194,93 @@ class _LoginPageState extends State<LoginPage>
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: Stack(
-          children: [
-            ImageFiltered(
-              imageFilter: crossFade?ImageFilter.blur(sigmaX: 0.0, sigmaY: 0.0):ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                      colors: [Color(0xff1E1E1F), Color(0xff4C4D51)]),
-                ),
-                child: Opacity(
-                  opacity: .3,
-                  child: CachedNetworkImage(
-                    height: Get.height,
-                    fit: BoxFit.fill,
-                    imageUrl:
-                    'https://images.unsplash.com/photo-1606613992706-02a0f77643f4?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80',
-                    // 'https://i.pinimg.com/originals/ae/9f/4d/ae9f4dc00d333cf0f5a1d56bb50bcbc7.jpg',
-                    //imageUrl: 'https://cutewallpaper.org/21/naruto-itachi-wallpaper-mobile/Uchiha-Itachi-Itachi-Uchiha-Akatsuki-Naruto-Love-.png',
+        body: IsScreenLoading(
+          isLoading: isLoading,
+          child: Stack(
+            children: [
+              ImageFiltered(
+                imageFilter: crossFade?ImageFilter.blur(sigmaX: 0.0, sigmaY: 0.0):ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [Color(0xff1E1E1F), Color(0xff4C4D51)]),
+                  ),
+                  child: Opacity(
+                    opacity: .3,
+                    child: CachedNetworkImage(
+                      height: Get.height,
+                      fit: BoxFit.fill,
+                      imageUrl:
+                      'https://images.unsplash.com/photo-1606613992706-02a0f77643f4?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80',
+                      // 'https://i.pinimg.com/originals/ae/9f/4d/ae9f4dc00d333cf0f5a1d56bb50bcbc7.jpg',
+                      //imageUrl: 'https://cutewallpaper.org/21/naruto-itachi-wallpaper-mobile/Uchiha-Itachi-Itachi-Uchiha-Akatsuki-Naruto-Love-.png',
+                    ),
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: width! * 50, right: width! * 50),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  AnimatedCrossFade(
-                      firstChild: upperSide(),
-                      secondChild: loginUpperSide(),
-                      crossFadeState: crossFade?CrossFadeState.showFirst:CrossFadeState.showSecond,
-                      duration: Duration(milliseconds: 200)),
+              Padding(
+                padding: EdgeInsets.only(left: width! * 50, right: width! * 50),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    AnimatedCrossFade(
+                        firstChild: upperSide(),
+                        secondChild: loginUpperSide(),
+                        crossFadeState: crossFade?CrossFadeState.showFirst:CrossFadeState.showSecond,
+                        duration: Duration(milliseconds: 200)),
 
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      GradientButton(
-                        width: width! * 1000,
-                        height: height! * 80,
-                        radius: width! * 100,
-                        onPressed: () async {
-                          if(crossFade){
-                            setState(() {
-                              crossFade = !crossFade;
-                            });
-                          }else{
-                            var hasException =  await AuthRepo().login(username.text, password.text,rememberMe);
-                            if(hasException != null){
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        GradientButton(
+                          width: width! * 1000,
+                          height: height! * 80,
+                          radius: width! * 100,
+                          onPressed: () async {
+                            if(crossFade){
                               setState(() {
-                                //isLoading = false;
+                                crossFade = !crossFade;
                               });
-                              Get.snackbar('Error', hasException);
+                            }else{
+                              setState(() {
+                                isLoading = true;
+                              });
+                              var hasException =  await AuthRepo().login(username.text, password.text,rememberMe);
+                              if(hasException != null){
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                Get.snackbar('Error', hasException);
+                              }
                             }
-                          }
-                        },
-                        gradientColors: [Color(0xff1E1E1F), Color(0xff4C4D51)],
-                        text: 'Login',
-                        textFontFamily: 'PermanentMarker-Regular',
-                        gradientStartDirection: Alignment.topCenter,
-                        gradientEndDirection: Alignment.bottomCenter,
-                      ),
-                    ],
-                  ),
-                  !crossFade?SizedBox(height: Get.height/30,):Container(),
-                  AnimatedCrossFade(
-                      firstChild: lowerSide(),
-                      secondChild: registerLowerSide(),
-                      crossFadeState: crossFade?CrossFadeState.showFirst:CrossFadeState.showSecond,
-                      firstCurve: Curves.linear,
-                      secondCurve: Curves.linear,
-                      duration: Duration(milliseconds: 400)),
-                  SizedBox(height: Get.height/120,)
-                ],
+                          },
+                          gradientColors: [Color(0xff1E1E1F), Color(0xff4C4D51)],
+                          text: 'Login',
+                          textFontFamily: 'PermanentMarker-Regular',
+                          gradientStartDirection: Alignment.topCenter,
+                          gradientEndDirection: Alignment.bottomCenter,
+                        ),
+                      ],
+                    ),
+                    !crossFade?SizedBox(height: Get.height/30,):Container(),
+                    AnimatedCrossFade(
+                        firstChild: lowerSide(),
+                        secondChild: registerLowerSide(),
+                        crossFadeState: crossFade?CrossFadeState.showFirst:CrossFadeState.showSecond,
+                        firstCurve: Curves.linear,
+                        secondCurve: Curves.linear,
+                        duration: Duration(milliseconds: 400)),
+                    SizedBox(height: Get.height/120,)
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -359,7 +364,9 @@ class _LoginPageState extends State<LoginPage>
           width: width! * 1000,
           height: height! * 80,
           radius: width! * 100,
-          onPressed: () {},
+          onPressed: () {
+            Get.to(()=>RegisterPage());
+          },
           borderColor: Colors.white,
           background: Colors.transparent,
           text: 'Sign Up',
