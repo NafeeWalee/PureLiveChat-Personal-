@@ -14,9 +14,5 @@ class Application: FlutterApplication(), PluginRegistrantCallback {
     }
 
     override fun registerWith(registry: PluginRegistry?) { registry?.registrarFor("io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingBackgroundService"); }
-//    override fun registerWith(registry: PluginRegistry?) {
-//
-////        GeneratedPluginRegistrant.registerWith(registry);
-////        io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingBackgroundService.registerWith(registry?.registrarFor("io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingBackgroundService"));
-//    }
+
 }

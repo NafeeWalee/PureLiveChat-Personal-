@@ -7,14 +7,14 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:107998770854:android:a880f8467e549d97dc2667",
+        "mobilesdk_app_id": "1:107998770854:android:89b636f858e6d58ddc2667",
         "android_client_info": {
           "package_name": "pure.firebase.chat"
         }
       },
       "oauth_client": [
         {
-          "client_id": "107998770854-ahlmh38f76s1rnn0t5027ula1mv19bf0.apps.googleusercontent.com",
+          "client_id": "107998770854-p1si740to7jogefplfjdhopv8q34hcu6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "pure.firebase.chat",

@@ -1,27 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:pure_live_chat/authentication/view/loginPage.dart';
 import 'package:pure_live_chat/authentication/view_model/userDataController.dart';
+import 'package:pure_live_chat/fcm/fcm_initalize.dart';
+import 'package:pure_live_chat/main_app/homePage/view/homePage.dart';
 import 'package:pure_live_chat/utility/controller/sizeConfig.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("Handling a background message: ${message.messageId}");
-}
 
 
-void main() async {
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await load();
-  await GetStorage.init();
   await Firebase.initializeApp();
+  await FCM.initializeFCM();
+  await GetStorage.init();
+  await load();
+
   Get.put(GetSizeConfig());
   Get.put(UserDataController());
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
   runApp(
     GetMaterialApp(
       title: 'Pure International',
@@ -38,7 +36,7 @@ void main() async {
             iconTheme: IconThemeData(color: Colors.black),
           )),
 
-      home: LoginPage(),
+      home: HomePage(),
     ),
   );
 }
