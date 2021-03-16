@@ -16,13 +16,11 @@ import 'package:pure_live_chat/utility/widgets/customTextField.dart';
 import 'package:pure_live_chat/utility/widgets/loader.dart';
 
 class RegisterPage extends StatefulWidget {
-
   @override
   _RegisterPageState createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-
   final formKey = GlobalKey<FormState>();
 
   final GetSizeConfig sizeConfig = Get.find();
@@ -41,9 +39,8 @@ class _RegisterPageState extends State<RegisterPage> {
   FocusNode? confPassNode;
 
   final picker = ImagePicker();
-  File? image ;
-  bool isLoading = false;
-
+  File? image;
+  bool isLoading = true;
 
   bool rememberUser = false;
 
@@ -83,7 +80,6 @@ class _RegisterPageState extends State<RegisterPage> {
     confPassNode?.dispose();
   }
 
-
   void selectPic() async {
     try {
       final pickedFile = await picker.getImage(source: ImageSource.gallery);
@@ -101,11 +97,16 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Future<void> convertAssetToFile() async {
     //Converting Asset to File for profile picture
-    Directory directory = await path_provider.getApplicationDocumentsDirectory();
+    Directory directory =
+        await path_provider.getApplicationDocumentsDirectory();
     var dbPath = join(directory.path, "temp.jpg");
-    ByteData data = await rootBundle.load("assets/images/demo_profile_image.jpg");
-    List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+    ByteData data = await rootBundle.load("assets/images/sasuke.jpg");
+    List<int> bytes =
+        data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
     image = await File(dbPath).writeAsBytes(bytes);
+    setState(() {
+      isLoading = false;
+    });
   }
 
   sendDataToFunction() async {
@@ -114,18 +115,25 @@ class _RegisterPageState extends State<RegisterPage> {
     });
     String userType = 'member';
     String loginType = 'regular';
-    var hasExceptionOnCreation = await authController.createUser( name: nameController.text,email: emailController.text.trim(),password: passwordController.text.trim(), userPhoto: image,loginType:loginType,userType:  userType,);
+    var hasExceptionOnCreation = await authController.createUser(
+      name: nameController.text,
+      email: emailController.text.trim(),
+      password: passwordController.text.trim(),
+      userPhoto: image,
+      loginType: loginType,
+      userType: userType,
+    );
     logger.i(hasExceptionOnCreation);
     setState(() {
       isLoading = false;
     });
     if (hasExceptionOnCreation != null) {
       getSnackbar(hasExceptionOnCreation);
-    }
-    else {
+    } else {
       print('here');
-      var hasException =  await authController.login(emailController.text, passwordController.text,rememberUser);
-      if(hasException != null){
+      var hasException = await authController.login(
+          emailController.text, passwordController.text, rememberUser);
+      if (hasException != null) {
         setState(() {
           isLoading = false;
         });
@@ -134,13 +142,14 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  getSnackbar(hasException){
+  getSnackbar(hasException) {
     Get.snackbar(
       "Error",
       hasException,
       backgroundColor: Colors.black,
       colorText: Colors.white,
-      margin: EdgeInsets.only(left: sizeConfig.width * 10,
+      margin: EdgeInsets.only(
+          left: sizeConfig.width * 10,
           right: sizeConfig.width * 10,
           bottom: sizeConfig.height * 15),
       snackPosition: SnackPosition.BOTTOM,
@@ -149,38 +158,40 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: ()=> FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        body: Stack(
-          children: [
-            IgnorePointer(
-              ignoring: isLoading?true:false,
-              child: Opacity(
-                opacity: isLoading?0.5:1,
-                child: Container(
-                  color: isLoading?Colors.grey[50]:Color(0xffF2F2FF),
-                  child: Center(
-                    child: SingleChildScrollView(
-                      physics: ClampingScrollPhysics(),
-                      child: Column(
-                        children: [
-                          header(),
-                          form(),
-                          SizedBox(height: sizeConfig.height * 50,),
-                          footer()
-                        ],
+    return Obx(() => GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Scaffold(
+            body: Stack(
+              children: [
+                IgnorePointer(
+                  ignoring: isLoading ? true : false,
+                  child: Opacity(
+                    opacity: isLoading ? 0.5 : 1,
+                    child: Container(
+                      color: isLoading ? Colors.grey[50] : Color(0xffF2F2FF),
+                      child: Center(
+                        child: SingleChildScrollView(
+                          physics: ClampingScrollPhysics(),
+                          child: Column(
+                            children: [
+                              header(),
+                              form(),
+                              SizedBox(
+                                height: sizeConfig.height * 50,
+                              ),
+                              footer()
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
+                isLoading ? Loader() : Container(),
+              ],
             ),
-            isLoading?Loader():Container(),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 
   Widget header() {
@@ -190,129 +201,145 @@ class _RegisterPageState extends State<RegisterPage> {
       child: Container(
         height: sizeConfig.width * 300,
         width: sizeConfig.width * 300,
-        child: Image.asset('assets/images/logo.png'),
+        child: Image.asset('assets/images/sasuke.jpg'),
       ),
     );
   }
 
   Widget form() {
-
-    return Obx((){
-      return Form(
-        key: formKey,
-        child: Column(
-          children: [
-            Stack(
-              children: [
-                CircleAvatar(
-                  radius: sizeConfig.getPixels(45),
-                  backgroundImage: FileImage(image!),
-                ),
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: GestureDetector(
-                    onTap: selectPic,
-                    child: CircleAvatar(
-                      radius: sizeConfig.getPixels(20),
-                      backgroundColor: Colors.white60,
-                      child: Icon(Icons.camera_alt_outlined),
+    return Form(
+      key: formKey,
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              image == null
+                  ? CircleAvatar(
+                      radius: sizeConfig.getPixels(45),
+                      backgroundImage:
+                          ExactAssetImage('assets/images/sasuke.jpg'),
+                    )
+                  : CircleAvatar(
+                      radius: sizeConfig.getPixels(45),
+                      backgroundImage: FileImage(image!),
                     ),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: GestureDetector(
+                  onTap: selectPic,
+                  child: CircleAvatar(
+                    radius: sizeConfig.getPixels(20),
+                    backgroundColor: Colors.white60,
+                    child: Icon(Icons.camera_alt_outlined),
                   ),
                 ),
-              ],
-            ),
-            SizedBox(height: sizeConfig.height * 10,),
-            RoundedTextField(
-              focusNode: nameNode!,
-              labelText: StringResources.registrationTextFieldHintName,
-              icon: Icons.person_outline,
-              controller: nameController,
-              validator: Validator().nullFieldValidate,
-            ),
-            SizedBox(height: sizeConfig.height * 10,),
-            RoundedTextField(
-              focusNode: emailNode!,
-              labelText: StringResources.registrationTextFieldHintEmail,
-              icon: Icons.email_outlined,
-              controller: emailController,
-              validator: Validator().validateEmail,
-              keyboardType: TextInputType.emailAddress,
-            ),
-            SizedBox(height: sizeConfig.height * 10,),
-            RoundedTextField(
-              focusNode: passwordNode!,
-              labelText: StringResources.registrationTextFieldHintPassword,
-              icon: Icons.lock_outline,
-              controller: passwordController,
-              obscureText: isObscure.value!,
-              validator: Validator().validatePassword,
-              suffixIcon: IconButton(
-                icon: !isObscure.value!
-                    ? Icon(
-                  Icons.visibility,
-                )
-                    : Icon(
-                  Icons.visibility_off,
-                ),
-                onPressed: () {
-                  isObscure.value = !isObscure.value!;
-                },
               ),
-            ),
-            SizedBox(height: sizeConfig.height * 10,),
-            RoundedTextField(
-              focusNode: confPassNode!,
-              labelText: StringResources.registrationTextFieldHintConfirmPassword,
-              icon: Icons.lock_outline,
-              controller: confPasswordController,
-              obscureText: isObscureConfirmPass.value!,
-              suffixIcon: IconButton(
-                icon: !isObscureConfirmPass.value!
-                    ? Icon(
-                  Icons.visibility,
-                )
-                    : Icon(
-                  Icons.visibility_off,
-                ),
-                onPressed: () {
-                  isObscureConfirmPass.value = !isObscureConfirmPass.value!;
-                },
-              ),
-              validator: (v){
-                return Validator().validateConfirmPassword(passwordController.text, v!);
+            ],
+          ),
+          SizedBox(
+            height: sizeConfig.height * 10,
+          ),
+          RoundedTextField(
+            focusNode: nameNode!,
+            labelText: StringResources.registrationTextFieldHintName,
+            icon: Icons.person_outline,
+            controller: nameController,
+            validator: Validator().nullFieldValidate,
+          ),
+          SizedBox(
+            height: sizeConfig.height * 10,
+          ),
+          RoundedTextField(
+            focusNode: emailNode!,
+            labelText: StringResources.registrationTextFieldHintEmail,
+            icon: Icons.email_outlined,
+            controller: emailController,
+            validator: Validator().validateEmail,
+            keyboardType: TextInputType.emailAddress,
+          ),
+          SizedBox(
+            height: sizeConfig.height * 10,
+          ),
+          RoundedTextField(
+            focusNode: passwordNode!,
+            labelText: StringResources.registrationTextFieldHintPassword,
+            icon: Icons.lock_outline,
+            controller: passwordController,
+            obscureText: isObscure.value!,
+            validator: Validator().validatePassword,
+            suffixIcon: IconButton(
+              icon: !isObscure.value!
+                  ? Icon(
+                      Icons.visibility,
+                    )
+                  : Icon(
+                      Icons.visibility_off,
+                    ),
+              onPressed: () {
+                isObscure.value = !isObscure.value!;
               },
             ),
-            SizedBox(height: sizeConfig.height * 30,),
-            //signUpMethods(),
-            SizedBox(height: sizeConfig.height * 30,),
-            BlueButton(
-                text: StringResources.registrationBtnRegister,
-                onTap: () async {
-                  FocusScope.of(this.context).unfocus();
-                  if (formKey.currentState!.validate()) {
-                    if (passwordController.text != confPasswordController.text) {
-                      Get.snackbar(
-                        "Text Field Error!",
-                        "Password does not match",
-                        backgroundColor: Colors.black,
-                        colorText: Colors.white,
-                        margin: EdgeInsets.only(left: sizeConfig.width * 10,
-                            right: sizeConfig.width * 10,
-                            bottom: sizeConfig.height * 15),
-                        snackPosition: SnackPosition.BOTTOM,
-                      );
-                    }else{
-                      sendDataToFunction();
-                    }
+          ),
+          SizedBox(
+            height: sizeConfig.height * 10,
+          ),
+          RoundedTextField(
+            focusNode: confPassNode!,
+            labelText: StringResources.registrationTextFieldHintConfirmPassword,
+            icon: Icons.lock_outline,
+            controller: confPasswordController,
+            obscureText: isObscureConfirmPass.value!,
+            suffixIcon: IconButton(
+              icon: !isObscureConfirmPass.value!
+                  ? Icon(
+                      Icons.visibility,
+                    )
+                  : Icon(
+                      Icons.visibility_off,
+                    ),
+              onPressed: () {
+                isObscureConfirmPass.value = !isObscureConfirmPass.value!;
+              },
+            ),
+            validator: (v) {
+              return Validator()
+                  .validateConfirmPassword(passwordController.text, v!);
+            },
+          ),
+          SizedBox(
+            height: sizeConfig.height * 30,
+          ),
+          //signUpMethods(),
+          SizedBox(
+            height: sizeConfig.height * 30,
+          ),
+          BlueButton(
+              text: StringResources.registrationBtnRegister,
+              onTap: () async {
+                FocusScope.of(this.context).unfocus();
+                if (formKey.currentState!.validate()) {
+                  if (passwordController.text != confPasswordController.text) {
+                    Get.snackbar(
+                      "Text Field Error!",
+                      "Password does not match",
+                      backgroundColor: Colors.black,
+                      colorText: Colors.white,
+                      margin: EdgeInsets.only(
+                          left: sizeConfig.width * 10,
+                          right: sizeConfig.width * 10,
+                          bottom: sizeConfig.height * 15),
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                  } else {
+                    sendDataToFunction();
                   }
                 }
-            )
-          ],
-        ),
-      );
-    });
+              })
+        ],
+      ),
+    );
   }
 
 /*  Widget signUpMethods() {
@@ -403,22 +430,13 @@ class _RegisterPageState extends State<RegisterPage> {
     return RichText(
       text: TextSpan(
           text: StringResources.registrationFooterTextNormal,
-          style: TextStyle(
-              color: Colors.black
-          ),
+          style: TextStyle(color: Colors.black),
           children: [
             TextSpan(
-                recognizer: TapGestureRecognizer()
-                  ..onTap = () => Get.back(),
+                recognizer: TapGestureRecognizer()..onTap = () => Get.back(),
                 text: StringResources.registrationFooterTextBold,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold
-                )
-            )
-          ]
-      ),
+                style: TextStyle(fontWeight: FontWeight.bold))
+          ]),
     );
   }
-
-
 }
