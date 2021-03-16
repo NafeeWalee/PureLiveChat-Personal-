@@ -12,6 +12,7 @@ import 'package:flutter/foundation.dart';
 import 'package:pure_live_chat/authentication/repo/authRepo.dart';
 import 'package:pure_live_chat/authentication/view/registerPage.dart';
 import 'package:pure_live_chat/utility/controller/sizeConfig.dart';
+import 'package:pure_live_chat/utility/resources/appConst.dart';
 import 'package:pure_live_chat/utility/widgets/gradientButton.dart';
 import 'package:pure_live_chat/utility/widgets/lightTextField.dart';
 import 'package:pure_live_chat/utility/widgets/orDivider.dart';
@@ -328,8 +329,7 @@ class _LoginPageState extends State<LoginPage>
         mini: true,
         radius: width! * iconWidth,
         width: width! * iconHeight,
-        svgIcon: 'assets/images/pawprint.svg',
-        // icon: Icons.whatshot_outlined,
+        icon: AppConst.icon,
         iconColor: Colors.white,
         iconSize: getSizeConfig.getPixels(iconWidth/(5)),
         onPressed: null,

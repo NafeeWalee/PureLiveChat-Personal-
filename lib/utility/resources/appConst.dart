@@ -1,4 +1,4 @@
-
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -29,8 +29,10 @@ class AppConst{
   static const Color themeBlue = Color(0xff0067BD);
 
 
-/*  static final Widget couponIcon = SvgPicture.asset(
-    'assets/images/svg/coupon.svg',
-    color: pink
-  );*/
+  static final Widget icon = SvgPicture.asset(
+      'assets/images/pawprint.svg',
+      color: white
+  );
+
+
 }

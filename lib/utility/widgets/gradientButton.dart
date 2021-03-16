@@ -3,8 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 @immutable
 class GradientButton extends StatelessWidget {
-  final IconData? icon;
-  final String? svgIcon;
+  final Widget? icon;
   final Color iconColor;
   final double radius;
   final List<Color> gradientColors;
@@ -25,7 +24,6 @@ class GradientButton extends StatelessWidget {
 
   const GradientButton(
       {Key? key,
-      this.svgIcon,
       this.mini = false,
       this.radius = 4.0,
       this.elevation = 1.8,
@@ -70,7 +68,11 @@ class GradientButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      style: TextButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius),),),
+      style: TextButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radius),
+        ),
+      ),
       onPressed: onPressed as void Function()?,
       child: mini
           ? Container(
@@ -78,15 +80,22 @@ class GradientButton extends StatelessWidget {
               width: width ?? 65.0,
               height: width ?? 65.0,
               child: icon != null
-                  ? Icon(
-                      icon,
-                      size: iconSize ?? 60,
+                  ? Container(
+                padding: EdgeInsets.all(8.0),
+                      child: icon,
+                      width: iconSize ?? 60,
+                      height: iconSize ?? 60,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: iconColor,
+                      ),
                     )
                   : Center(
-                    child: CachedNetworkImage(
-                      imageUrl: "https://midnightoilstudios.files.wordpress.com/2017/10/1200px-yin_yang-svg.png",
+                      child: CachedNetworkImage(
+                        imageUrl:
+                            "https://midnightoilstudios.files.wordpress.com/2017/10/1200px-yin_yang-svg.png",
+                      ),
                     ),
-                  ),
             )
           : Container(
               width: width ?? 165.0,
@@ -102,11 +111,16 @@ class GradientButton extends StatelessWidget {
                     style: textStyle,
                   ),
                   if (icon != null)
-                    Icon(
-                      icon,
-                      color: iconColor,
-                      size: iconSize ?? 60,
-                    ),
+                    Container(
+                      margin: EdgeInsets.all(8.0),
+                      child: icon,
+                      width: iconSize ?? 60,
+                      height: iconSize ?? 60,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: iconColor,
+                      ),
+                    )
                 ],
               ),
             ),
