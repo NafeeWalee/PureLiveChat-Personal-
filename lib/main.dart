@@ -13,6 +13,9 @@ import 'package:pure_live_chat/utility/resources/appConst.dart';
 import 'package:pure_live_chat/utility/widgets/gradientButton.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
+import 'authentication/repo/authRepo.dart';
+import 'authentication/view/loginPage.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -22,6 +25,7 @@ Future<void> main() async {
 
   Get.put(GetSizeConfig());
   Get.put(UserDataController());
+  Get.put(AuthRepo());
   runApp(
     GetMaterialApp(
       title: 'Pure International',
@@ -85,7 +89,7 @@ Future<void> main() async {
               ],
             ),
           ),
-          nextScreen: HomePage(),
+          nextScreen: LoginPage(),
           splashTransition: SplashTransition.fadeTransition,
           pageTransitionType: PageTransitionType.leftToRightWithFade,
           backgroundColor: Colors.deepPurple),

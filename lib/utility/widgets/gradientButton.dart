@@ -81,15 +81,21 @@ class GradientButton extends StatelessWidget {
               height: width ?? 65.0,
               child: icon != null
                   ? Container(
-                padding: EdgeInsets.all(8.0),
-                      child: icon,
                       width: iconSize ?? 60,
                       height: iconSize ?? 60,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
+                        gradient: LinearGradient(
+                            colors: [Color(0xffE8AA4F), Color(0xffED5369)]),
                         color: iconColor,
                       ),
-                    )
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        padding: EdgeInsets.all(12),
+                        child: icon,
+                      ),
+              )
                   : Center(
                       child: CachedNetworkImage(
                         imageUrl:

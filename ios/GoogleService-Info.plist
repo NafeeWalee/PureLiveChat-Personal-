@@ -3,23 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>573355825174-5la04clfu0kcsb95bm1lbbhvf39qkn3d.apps.googleusercontent.com</string>
+	<string>107998770854-cm46cp4e9o99lib2nk96gsivkbgn4qo0.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.573355825174-5la04clfu0kcsb95bm1lbbhvf39qkn3d</string>
+	<string>com.googleusercontent.apps.107998770854-cm46cp4e9o99lib2nk96gsivkbgn4qo0</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>573355825174-3052ajq8bvcn7f3j3rp41p34l86dhb96.apps.googleusercontent.com</string>
+	<string>107998770854-p1si740to7jogefplfjdhopv8q34hcu6.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDMhJfkZhMbshTFaVBI_SxqXK8-Og9GQcw</string>
+	<string>AIzaSyC5rFhbeQgoxNpqctidORKLIqvcnbXi5xU</string>
 	<key>GCM_SENDER_ID</key>
-	<string>573355825174</string>
+	<string>107998770854</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>pure.firebase.chat</string>
 	<key>PROJECT_ID</key>
-	<string>cloud-function-2df6c</string>
+	<string>purelivechat</string>
 	<key>STORAGE_BUCKET</key>
-	<string>cloud-function-2df6c.appspot.com</string>
+	<string>purelivechat.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:573355825174:ios:4654e790fd80bcbd5abd37</string>
+	<string>1:107998770854:ios:029ab0473fbdf5c2dc2667</string>
 </dict>
 </plist>
