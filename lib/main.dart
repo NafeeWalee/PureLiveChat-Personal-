@@ -89,7 +89,7 @@ Future<void> main() async {
               ],
             ),
           ),
-          nextScreen: LoginPage(),
+          nextScreen: HomePage(),
           splashTransition: SplashTransition.fadeTransition,
           pageTransitionType: PageTransitionType.leftToRightWithFade,
           backgroundColor: Colors.deepPurple),

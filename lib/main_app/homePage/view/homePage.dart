@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pure_live_chat/main_app/chatPanel/view/chatPanel.dart';
 import 'package:pure_live_chat/utility/resources/appConst.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -96,7 +97,7 @@ class _HomePageState extends State<HomePage> {
                       shrinkWrap: true,
                       itemCount: 10,
                       itemBuilder: (context, index) {
-                    return singleMemberPanel();
+                    return singleMemberPanel(index);
                   }),
                 ],
               )
@@ -108,7 +109,7 @@ class _HomePageState extends State<HomePage> {
   }
 
 
-  Padding activeMembers(int index) {
+  activeMembers(int index) {
     return Padding(
       padding: EdgeInsets.only(
         right: Get.width / 25,
@@ -132,80 +133,83 @@ class _HomePageState extends State<HomePage> {
             ),
           )
 
-      ): avatarPicture(myDay: true),
+      ): avatarPicture(myDay: true,index: 1000+index),
     );
   }
 
-  Row singleMemberPanel() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-       avatarPicture(),
-        SizedBox(
-          width: 7,
-        ),
-        Container(
-          height: Get.height / 10,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Flexible(
-                flex: 1,
-                child: Container(
-                  width: Get.width / 1.6,
-                  child: Text(
-                    'Mizutani Shizuku',
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: "Quicksand"),
-                  ),
-                ),
-              ),
-              Flexible(
-                flex: 1,
-                child: Container(
-                  width: Get.width / 1.6,
-                  child: Text(
-                    'Oi oi oi oi oi oi oi ooio io io io ii!',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        color: Colors.grey,
-                        fontFamily: "Quicksand"),
-                  ),
-                ),
-              ),
-            ],
+  singleMemberPanel(int index) {
+    return GestureDetector(
+      onTap: ()=> Get.to(()=>ChatPanel()),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+         avatarPicture(index: 2000+index),
+          SizedBox(
+            width: 7,
           ),
-        ),
-        SizedBox(
-          width: 7,
-        ),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            height: Get.width / 15,
-            width: Get.width / 12,
-            decoration:
-            BoxDecoration(color: AppConst.themePurple),
-            child: Center(
-              child: Text(
-                '3',
-                style: TextStyle(
-                    color: Colors.white, fontFamily: "Quicksand"),
-              ),
+          Container(
+            height: Get.height / 10,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: Container(
+                    width: Get.width / 1.6,
+                    child: Text(
+                      'Mizutani Shizuku',
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: "Quicksand"),
+                    ),
+                  ),
+                ),
+                Flexible(
+                  flex: 1,
+                  child: Container(
+                    width: Get.width / 1.6,
+                    child: Text(
+                      'Oi oi oi oi oi oi oi ooio io io io ii!',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: Colors.grey,
+                          fontFamily: "Quicksand"),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-        )
-      ],
+          SizedBox(
+            width: 7,
+          ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              height: Get.width / 15,
+              width: Get.width / 12,
+              decoration:
+              BoxDecoration(color: AppConst.themePurple),
+              child: Center(
+                child: Text(
+                  '3',
+                  style: TextStyle(
+                      color: Colors.white, fontFamily: "Quicksand"),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 
-  Container avatarPicture({bool? myDay}) {
+  avatarPicture({bool? myDay,required int index}) {
     return Container(
       height: Get.width / 7,
       width: Get.width / 7,
@@ -227,7 +231,9 @@ class _HomePageState extends State<HomePage> {
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image: CachedNetworkImageProvider(
-                      'https://fiverr-res.cloudinary.com/images/t_smartwm/t_main1,q_auto,f_auto,q_auto,f_auto/deliveries/101990328/original/2_c/draw-a-cute-anime-manga-girl-face.png'),
+                    // 'https://i.ibb.co/k2wgGXk/received-791042024861031.jpg'
+                      'https://fiverr-res.cloudinary.com/images/t_smartwm/t_main1,q_auto,f_auto,q_auto,f_auto/deliveries/101990328/original/2_c/draw-a-cute-anime-manga-girl-face.png'
+                  ),
                 ),
               ),
             ),
