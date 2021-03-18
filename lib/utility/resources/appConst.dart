@@ -27,6 +27,7 @@ class AppConst{
       blurRadius: 15
   );
   static const Color themeBlue = Color(0xff0067BD);
+  static const Color themePurple = Colors.deepPurple;
 
 
   static final Widget icon = SvgPicture.asset(
