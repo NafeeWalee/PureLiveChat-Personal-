@@ -1,3 +1,3 @@
 # Pure Chat
 
-Realtime chatting system with audio and video streaming.
+Chat app of realtime chat system using firebase and live sharing lcoation to chat partner using google maps api.
