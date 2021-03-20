@@ -29,6 +29,9 @@ class AppConst{
   static const Color themeBlue = Color(0xff0067BD);
   static const Color themePurple = Colors.deepPurple;
 
+  static const Color gradientFirst = Color(0xffE8AA4F);
+  static const Color gradientSecond = Color(0xffED5369);
+
 
   static final Widget icon = SvgPicture.asset(
       'assets/images/pawprint.svg',

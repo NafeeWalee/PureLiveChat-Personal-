@@ -2,7 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pure_live_chat/utility/controller/sizeConfig.dart';
-
+import 'package:pure_live_chat/utility/resources/appConst.dart';
+import 'package:pure_live_chat/utility/resources/validator.dart';
 class LightTextField extends StatelessWidget {
   final GetSizeConfig sizeConfig = Get.find();
   final String hintText;
@@ -16,6 +17,13 @@ class LightTextField extends StatelessWidget {
   final int minLines;
   final int maxLines;
   final Color? textColor;
+  final FormFieldValidator<String>? validator;
+  final bool autoValidate;
+  final FocusNode? focusNode;
+  final IconData? icon;
+  final TextInputType? keyboardType;
+  final Widget? suffixIcon;
+  final bool? obscureText;
   LightTextField({
     required this.hintText,
     this.enabled = false,
@@ -27,25 +35,39 @@ class LightTextField extends StatelessWidget {
     this.textInputType = TextInputType.text,
     this.hintColor,
     this.textColor,
-    required this.controller
+    required this.controller,
+    this.validator,
+    this.autoValidate = false,
+    required this.focusNode,
+    this.icon, this.keyboardType, this.suffixIcon, this.obscureText = false,
+
+
 });
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        TextField(
-          keyboardType: textInputType,
+        TextFormField(
+          // validator: Validator().nullFieldValidate,
           inputFormatters: inputFormatter,
           controller: controller,
+          focusNode: focusNode,
           enabled: enabled,
           minLines: minLines,
           obscureText: obscure,
           maxLines: obscure ? 1 :  maxLines,
+          keyboardType: keyboardType,
           style: TextStyle(
-            color: textColor??Colors.black
+            color: textColor??Colors.black,
+            fontFamily: "Quicksand"
           ),
           decoration: InputDecoration(
             prefix: SizedBox(width: 10,),
+              prefixIcon: Icon(
+                icon,
+                color: focusNode!.hasFocus ? AppConst.gradientFirst : AppConst.gradientSecond,
+              ),
+              suffixIcon: suffixIcon,
             hintText: hintText,
             hintStyle: TextStyle(
               color: hintColor ?? Color(0xffD2D2D2)
@@ -89,6 +111,7 @@ class LightTextField extends StatelessWidget {
             contentPadding: EdgeInsets.symmetric(horizontal: sizeConfig.width * 25,vertical: sizeConfig.height * 10)
           ),
         ),
+
         suffix ? Positioned(
           right: sizeConfig.width * 10,
           child: IconButton(

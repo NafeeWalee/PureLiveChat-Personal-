@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/services.dart' show ByteData, rootBundle;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -8,12 +9,17 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:pure_live_chat/authentication/repo/authRepo.dart';
+import 'package:pure_live_chat/authentication/view/loginPage.dart';
 import 'package:pure_live_chat/utility/controller/sizeConfig.dart';
+import 'package:pure_live_chat/utility/resources/appConst.dart';
 import 'package:pure_live_chat/utility/resources/stringResources.dart';
 import 'package:pure_live_chat/utility/resources/validator.dart';
 import 'package:pure_live_chat/utility/widgets/blueButton.dart';
-import 'package:pure_live_chat/utility/widgets/customTextField.dart';
+import 'package:pure_live_chat/utility/widgets/gradientButton.dart';
+import 'package:pure_live_chat/utility/widgets/lightTextField.dart';
 import 'package:pure_live_chat/utility/widgets/loader.dart';
+
+import 'package:cached_network_image/cached_network_image.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -33,6 +39,8 @@ class _RegisterPageState extends State<RegisterPage> {
   var isObscure = true.obs;
   var isObscureConfirmPass = true.obs;
 
+  double? width;
+  double? height;
   FocusNode? nameNode;
   FocusNode? emailNode;
   FocusNode? passwordNode;
@@ -47,6 +55,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void initState() {
     super.initState();
+    setInitialScreenSize();
     convertAssetToFile();
     nameNode = FocusNode();
     emailNode = FocusNode();
@@ -78,6 +87,11 @@ class _RegisterPageState extends State<RegisterPage> {
     emailNode?.dispose();
     passwordNode?.dispose();
     confPassNode?.dispose();
+  }
+
+  setInitialScreenSize() {
+    width = sizeConfig.width.value;
+    height = sizeConfig.height.value;
   }
 
   void selectPic() async {
@@ -161,20 +175,42 @@ class _RegisterPageState extends State<RegisterPage> {
     return Obx(() => GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: Scaffold(
+            resizeToAvoidBottomInset: false,
             body: Stack(
               children: [
+                ImageFiltered(
+                  imageFilter: ImageFilter.blur(sigmaX: 0.0, sigmaY: 0.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: [Color(0xff1E1E1F), Color(0xff4C4D51)]),
+                    ),
+                    child: Opacity(
+                      opacity: .3,
+                      child: CachedNetworkImage(
+                        height: Get.height,
+                        fit: BoxFit.fill,
+                        imageUrl:
+                            'https://images.unsplash.com/photo-1606613992706-02a0f77643f4?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80',
+                        // 'https://i.pinimg.com/originals/ae/9f/4d/ae9f4dc00d333cf0f5a1d56bb50bcbc7.jpg',
+                        //imageUrl: 'https://cutewallpaper.org/21/naruto-itachi-wallpaper-mobile/Uchiha-Itachi-Itachi-Uchiha-Akatsuki-Naruto-Love-.png',
+                      ),
+                    ),
+                  ),
+                ),
                 IgnorePointer(
                   ignoring: isLoading ? true : false,
                   child: Opacity(
                     opacity: isLoading ? 0.5 : 1,
                     child: Container(
-                      color: isLoading ? Colors.grey[50] : Color(0xffF2F2FF),
+                      color: isLoading ? Colors.grey[50] : Colors.transparent,
                       child: Center(
                         child: SingleChildScrollView(
                           physics: ClampingScrollPhysics(),
                           child: Column(
                             children: [
-                              header(),
                               form(),
                               SizedBox(
                                 height: sizeConfig.height * 50,
@@ -194,18 +230,6 @@ class _RegisterPageState extends State<RegisterPage> {
         ));
   }
 
-  Widget header() {
-    return Container(
-      height: sizeConfig.height * 200,
-      // color: Colors.red,
-      child: Container(
-        height: sizeConfig.width * 300,
-        width: sizeConfig.width * 300,
-        child: Image.asset('assets/images/sasuke.jpg'),
-      ),
-    );
-  }
-
   Widget form() {
     return Form(
       key: formKey,
@@ -214,110 +238,156 @@ class _RegisterPageState extends State<RegisterPage> {
           Stack(
             children: [
               image == null
-                  ? CircleAvatar(
-                      radius: sizeConfig.getPixels(45),
-                      backgroundImage:
-                          ExactAssetImage('assets/images/sasuke.jpg'),
+                  ? Container(
+                      width: sizeConfig.width * 250,
+                      height: sizeConfig.width * 250,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: AppConst.white),
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: ExactAssetImage('assets/images/sasuke.jpg'),
+                          )),
                     )
-                  : CircleAvatar(
-                      radius: sizeConfig.getPixels(45),
-                      backgroundImage: FileImage(image!),
+                  : Container(
+                      width: sizeConfig.width * 250,
+                      height: sizeConfig.width * 250,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                          border: Border.all(color: AppConst.white),
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: FileImage(image!),
+                          ),
+                      ),
                     ),
               Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: GestureDetector(
-                  onTap: selectPic,
-                  child: CircleAvatar(
-                    radius: sizeConfig.getPixels(20),
-                    backgroundColor: Colors.white60,
-                    child: Icon(Icons.camera_alt_outlined),
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  child: Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.grey.withOpacity(0.6),
+                      ),
+                      child: IconButton(
+                        onPressed: selectPic,
+                        icon: Icon(Icons.camera_alt_outlined,color: AppConst.gradientSecond,),
+                      ),
+                    ),
                   ),
-                ),
               ),
             ],
           ),
           SizedBox(
             height: sizeConfig.height * 10,
           ),
-          RoundedTextField(
-            focusNode: nameNode!,
-            labelText: StringResources.registrationTextFieldHintName,
-            icon: Icons.person_outline,
-            controller: nameController,
-            validator: Validator().nullFieldValidate,
-          ),
-          SizedBox(
-            height: sizeConfig.height * 10,
-          ),
-          RoundedTextField(
-            focusNode: emailNode!,
-            labelText: StringResources.registrationTextFieldHintEmail,
-            icon: Icons.email_outlined,
-            controller: emailController,
-            validator: Validator().validateEmail,
-            keyboardType: TextInputType.emailAddress,
-          ),
-          SizedBox(
-            height: sizeConfig.height * 10,
-          ),
-          RoundedTextField(
-            focusNode: passwordNode!,
-            labelText: StringResources.registrationTextFieldHintPassword,
-            icon: Icons.lock_outline,
-            controller: passwordController,
-            obscureText: isObscure.value!,
-            validator: Validator().validatePassword,
-            suffixIcon: IconButton(
-              icon: !isObscure.value!
-                  ? Icon(
-                      Icons.visibility,
-                    )
-                  : Icon(
-                      Icons.visibility_off,
-                    ),
-              onPressed: () {
-                isObscure.value = !isObscure.value!;
-              },
+          Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: width! * 60, vertical: height! * 15),
+            child: LightTextField(
+              focusNode: nameNode!,
+              controller: nameController,
+              icon: Icons.person_outline,
+              enabled: true,
+              textColor: Colors.white,
+              validator: Validator().nullFieldValidate,
+              hintText: 'Username',
             ),
           ),
           SizedBox(
             height: sizeConfig.height * 10,
           ),
-          RoundedTextField(
-            focusNode: confPassNode!,
-            labelText: StringResources.registrationTextFieldHintConfirmPassword,
-            icon: Icons.lock_outline,
-            controller: confPasswordController,
-            obscureText: isObscureConfirmPass.value!,
-            suffixIcon: IconButton(
-              icon: !isObscureConfirmPass.value!
-                  ? Icon(
-                      Icons.visibility,
-                    )
-                  : Icon(
-                      Icons.visibility_off,
-                    ),
-              onPressed: () {
-                isObscureConfirmPass.value = !isObscureConfirmPass.value!;
-              },
+          Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: width! * 60, vertical: height! * 15),
+            child: LightTextField(
+              focusNode: emailNode!,
+              icon: Icons.email_outlined,
+              controller: emailController,
+              enabled: true,
+              textColor: Colors.white,
+              hintText: 'Email Address',
+              validator: Validator().validateEmail,
+              keyboardType: TextInputType.emailAddress,
             ),
-            validator: (v) {
-              return Validator()
-                  .validateConfirmPassword(passwordController.text, v!);
-            },
+          ),
+          SizedBox(
+            height: sizeConfig.height * 10,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: width! * 60, vertical: height! * 15),
+            child: LightTextField(
+              focusNode: passwordNode!,
+              icon: Icons.lock_outline,
+              controller: passwordController,
+              obscure: isObscure.value!,
+              enabled: true,
+              textColor: Colors.white,
+              hintText: 'Password',
+              validator: Validator().validatePassword,
+              suffixIcon: IconButton(
+                icon: !isObscure.value!
+                    ? Icon(
+                        Icons.visibility,
+                        color: AppConst.gradientFirst,
+                      )
+                    : Icon(Icons.visibility_off,
+                        color: AppConst.gradientSecond),
+                onPressed: () {
+                  isObscure.value = !isObscure.value!;
+                },
+              ),
+            ),
+          ),
+          SizedBox(
+            height: sizeConfig.height * 10,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: width! * 60, vertical: height! * 15),
+            child: LightTextField(
+              focusNode: confPassNode!,
+              icon: Icons.lock_outline,
+              controller: confPasswordController,
+              obscure: isObscureConfirmPass.value!,
+              suffixIcon: IconButton(
+                icon: !isObscureConfirmPass.value!
+                    ? Icon(
+                        Icons.visibility,
+                        color: AppConst.gradientFirst,
+                      )
+                    : Icon(
+                        Icons.visibility_off,
+                        color: AppConst.gradientSecond,
+                      ),
+                onPressed: () {
+                  isObscureConfirmPass.value = !isObscureConfirmPass.value!;
+                },
+              ),
+              validator: (v) {
+                return Validator()
+                    .validateConfirmPassword(passwordController.text, v!);
+              },
+              enabled: true,
+              textColor: Colors.white,
+              hintText: 'Confirm Password',
+            ),
           ),
           SizedBox(
             height: sizeConfig.height * 30,
           ),
-          //signUpMethods(),
-          SizedBox(
-            height: sizeConfig.height * 30,
-          ),
-          BlueButton(
-              text: StringResources.registrationBtnRegister,
-              onTap: () async {
+          Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: width! * 60, vertical: height! * 15),
+            child: GradientButton(
+              width: width! * 1000,
+              height: height! * 80,
+              radius: width! * 100,
+              onPressed: () async {
                 FocusScope.of(this.context).unfocus();
                 if (formKey.currentState!.validate()) {
                   if (passwordController.text != confPasswordController.text) {
@@ -336,101 +406,24 @@ class _RegisterPageState extends State<RegisterPage> {
                     sendDataToFunction();
                   }
                 }
-              })
-        ],
-      ),
-    );
-  }
-
-/*  Widget signUpMethods() {
-    return Container(
-      height: sizeConfig.height * 100,
-      width: sizeConfig.width * 750,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Text(
-            StringResources.registrationSignUpMethodText,
-            style: TextStyle(
-                fontSize: sizeConfig.getPixels(16)
+              },
+              gradientColors: [AppConst.gradientFirst, AppConst.gradientSecond],
+              text: 'Sign Up',
+              textFontFamily: 'PermanentMarker-Regular',
+              gradientStartDirection: Alignment.topCenter,
+              gradientEndDirection: Alignment.bottomCenter,
             ),
           ),
-          signUpMethod(StringResources.loginImgSignInWithGoogle, 'google'),
-          signUpMethod(StringResources.loginImgSignInWithFacebook, 'facebook'),
         ],
       ),
     );
   }
-
-  Widget signUpMethod(String image, String identifier){
-    return GestureDetector(
-      onTap: () async {
-        if(identifier == 'facebook'){
-          setState(() {
-            isLoading = true;
-          });
-          print('Checking Facebook...');
-          AuthRepo authFacebook = Get.find();
-          var hasException = await authFacebook.loginFacebook();
-          if(hasException != null){
-            setState(() {
-              isLoading = false;
-            });
-            Get.snackbar(
-              "Error signing in",
-              hasException,
-              backgroundColor: Colors.black,
-              colorText: Colors.white,
-              margin: EdgeInsets.only(left: 10,
-                  right: 10,
-                  bottom: 15),
-              snackPosition: SnackPosition.BOTTOM,
-            );
-          }
-        }else if(identifier == 'google'){
-          setState(() {
-            isLoading = true;
-          });
-          print('Checking Google...');
-          AuthRepo authGoogle = Get.find();
-          var hasException = await authGoogle.handleGoogleSignIn();
-          if(hasException != null){
-            setState(() {
-              isLoading = false;
-            });
-            Get.snackbar(
-              "Error signing in",
-              hasException,
-              backgroundColor: Colors.black,
-              colorText: Colors.white,
-              margin: EdgeInsets.only(left: 10,
-                  right: 10,
-                  bottom: 15),
-              snackPosition: SnackPosition.BOTTOM,
-            );
-          }
-        }
-      },
-      child: Card(
-        elevation: 8,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(111)),
-        child: Padding(
-            padding: EdgeInsets.all(sizeConfig.getPixels(4)),
-            child: CircleAvatar(
-              backgroundImage: AssetImage(image),
-              backgroundColor: Colors.transparent,
-              radius: sizeConfig.getPixels(30),
-            )
-        ),
-      ),
-    );
-  }*/
 
   Widget footer() {
     return RichText(
       text: TextSpan(
           text: StringResources.registrationFooterTextNormal,
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white),
           children: [
             TextSpan(
                 recognizer: TapGestureRecognizer()..onTap = () => Get.back(),

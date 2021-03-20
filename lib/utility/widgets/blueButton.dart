@@ -16,7 +16,7 @@ class BlueButton extends StatelessWidget {
     return InkWell(
       onTap: onTap as void Function()?,
       child: Container(
-        height: sizeConfig.getPixels(60),
+        height: sizeConfig.width*60,
         width: sizeConfig.width * 500,
         decoration: BoxDecoration(
             color: AppConst.blue,

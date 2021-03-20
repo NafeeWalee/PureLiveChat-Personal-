@@ -54,9 +54,6 @@ class AuthRepo extends GetxController {
       DateTime staticTime = DateTime(2020, 1, 1, 12, 1, 1, 1, 1);
       Timestamp timestamp = Timestamp.fromDate(staticTime);
 
-
-      //DateTime dateNow = now.toDate(); //TimeStamp to Date
-      //DateTime.fromMicrosecondsSinceEpoch(time.microsecondsSinceEpoch) //TimeStamp to Date
       var data = UserModel(
         userID: userID,
         userGroupID: '',
@@ -130,11 +127,6 @@ class AuthRepo extends GetxController {
     }
   }
 
-  userTypeIdentify(){
-    // Future.delayed(Duration(milliseconds: 1000)).then((value){
-    userTypeIdentifier();
-    // });
-  }
 
   userTypeIdentifier() async{
     UserModel value = userDataController.userData.value!;

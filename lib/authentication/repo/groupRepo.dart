@@ -12,17 +12,12 @@ class RepoGroupMembers {
   Logger logger = Logger();
 
   UserDataController userDataController = Get.find();
-  final CollectionReference group =
-  FirebaseFirestore.instance.collection('Groups');
-  final CollectionReference user =
-  FirebaseFirestore.instance.collection('User');
+  final CollectionReference group = FirebaseFirestore.instance.collection('Groups');
+  final CollectionReference user = FirebaseFirestore.instance.collection('User');
 
   getGroupMemberData() async {
     userDataController.groupMemberData.clear();
-    QuerySnapshot querySnapshot = await user.where(
-        'userGroupID',
-        isEqualTo: userDataController.userData.value!.userGroupID
-    ).get();
+    QuerySnapshot querySnapshot = await user.where('userGroupID', isEqualTo: userDataController.userData.value!.userGroupID).get();
     querySnapshot.docs.forEach((element) {
       userDataController.groupMemberData.add(UserModel.fromJson(element.data()!));
     });

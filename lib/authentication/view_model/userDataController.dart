@@ -13,6 +13,7 @@ class UserDataController extends GetxController{
   var groupMemberData =<UserModel>[].obs;
   // RxList<UserModel> ungroupMemberData =[].obs;
   var ungroupMemberData =<UserModel>[].obs;
+  var getAllMembers =<UserModel>[].obs;
   var tabIndex = 0.obs;
 
 }

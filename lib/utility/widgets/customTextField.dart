@@ -61,7 +61,7 @@ class RoundedTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: sizeConfig.getPixels(60),
+      height: sizeConfig.height * 60,
       width: sizeConfig.width * 800,
       child: TextFormField(
         obscureText: obscureText,

@@ -59,7 +59,7 @@ class UserProfileDataRepository{
     }
   }
 
-  logCheckInFailed(String qrCode) async {
+  logCheckInFailed(String? qrCode) async {
     try{
       await checkInErrors.add({
         'userId': '${userDataController.userData.value!.userID}',

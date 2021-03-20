@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage>
   @override
   bool get wantKeepAlive => true;
 
-  GetSizeConfig getSizeConfig = Get.find();
+  GetSizeConfig sizeConfig = Get.find();
   double? width;
   double? height;
   bool _switchValue = false;
@@ -43,9 +43,11 @@ class _LoginPageState extends State<LoginPage>
 
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
+  FocusNode? usernameNode;
+  FocusNode? passwordNode;
   bool rememberMe = false;
   bool isLoading = false;
-
+  var isObscure = true.obs;
   @override
   void initState() {
     if (!mounted) {
@@ -53,6 +55,18 @@ class _LoginPageState extends State<LoginPage>
     } else {
       super.initState();
       setInitialScreenSize();
+
+      usernameNode = FocusNode();
+      passwordNode = FocusNode();
+
+      usernameNode?.addListener(() {
+        setState(() {});
+      });
+
+      passwordNode?.addListener(() {
+        setState(() {});
+      });
+
       if ((defaultTargetPlatform == TargetPlatform.iOS) || (defaultTargetPlatform == TargetPlatform.android)) {
         initConnectivity();
         _connectivitySubscription = _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
@@ -72,22 +86,17 @@ class _LoginPageState extends State<LoginPage>
     _connectivitySubscription?.cancel();
     username.dispose();
     password.dispose();
+
+    usernameNode?.dispose();
+    passwordNode?.dispose();
+
     super.dispose();
   }
-
   setInitialScreenSize() {
-    getSizeConfig.setSize(
-      (Get.width -
-          (Get.mediaQuery.padding.left + Get.mediaQuery.padding.right)) /
-          1000,
-      (Get.height -
-          (Get.mediaQuery.padding.top + Get.mediaQuery.padding.bottom)) /
-          1000,
-    );
-    width = getSizeConfig.width.value;
-    height = getSizeConfig.height.value;
-
+    width = sizeConfig.width.value;
+    height = sizeConfig.height.value;
   }
+
 
   Future initConnectivity() async {
     ConnectivityResult? result;
@@ -129,8 +138,7 @@ class _LoginPageState extends State<LoginPage>
               bottom: height! * 20, left: width! * 15, right: width! * 15),
           snackPosition: SnackPosition.BOTTOM);
     } else {
-      Get.snackbar('Connected to Network', 'Internet Connection Established!',backgroundColor: Colors.black,colorText: Colors.white,
-          margin: EdgeInsets.only(bottom: height!*20,left: width!*15,right:width!*15),snackPosition: SnackPosition.BOTTOM);
+      //Get.snackbar('Connected to Network', 'Internet Connection Established!',backgroundColor: Colors.black,colorText: Colors.white, margin: EdgeInsets.only(bottom: height!*20,left: width!*15,right:width!*15),snackPosition: SnackPosition.BOTTOM);
     }
     print('init result: ${currentStatus.toString()}');
   }
@@ -232,7 +240,6 @@ class _LoginPageState extends State<LoginPage>
                         secondChild: loginUpperSide(),
                         crossFadeState: crossFade?CrossFadeState.showFirst:CrossFadeState.showSecond,
                         duration: Duration(milliseconds: 200)),
-
                     Column(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -260,15 +267,30 @@ class _LoginPageState extends State<LoginPage>
                               }
                             }
                           },
-                          gradientColors: [Color(0xff1E1E1F), Color(0xff4C4D51)],
+                          gradientColors: [AppConst.gradientSecond, AppConst.gradientFirst],
+
                           text: 'Login',
                           textFontFamily: 'PermanentMarker-Regular',
                           gradientStartDirection: Alignment.topCenter,
                           gradientEndDirection: Alignment.bottomCenter,
                         ),
+
+                        !crossFade?SizedBox(height: Get.height/100,):Container(),
+                        !crossFade?GradientButton(
+                          width: width! * 1000,
+                          height: height! * 80,
+                          radius: width! * 100,
+                          onPressed: () {
+                            Get.to(()=>RegisterPage());
+                          },
+                          gradientColors: [AppConst.gradientFirst, AppConst.gradientSecond],
+                          text: 'Sign Up',
+                          textFontFamily: 'PermanentMarker-Regular',
+                          gradientStartDirection: Alignment.topCenter,
+                          gradientEndDirection: Alignment.bottomCenter,
+                        ):SizedBox(),
                       ],
                     ),
-                    !crossFade?SizedBox(height: Get.height/30,):Container(),
                     AnimatedCrossFade(
                         firstChild: lowerSide(),
                         secondChild: registerLowerSide(),
@@ -300,7 +322,7 @@ class _LoginPageState extends State<LoginPage>
           'Welcome',
           style: TextStyle(
               fontFamily: 'PermanentMarker-Regular',
-              fontSize: getSizeConfig.getPixels(36),
+              fontSize: sizeConfig.getPixels(36),
               fontWeight: FontWeight.bold,
               color: Colors.white),
         ),
@@ -312,7 +334,7 @@ class _LoginPageState extends State<LoginPage>
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontFamily: 'Pacifico-Regular',
-                fontSize: getSizeConfig.getPixels(20),
+                fontSize: sizeConfig.getPixels(20),
                 fontWeight: FontWeight.normal,
                 color: Colors.white),
           ),
@@ -331,9 +353,9 @@ class _LoginPageState extends State<LoginPage>
         width: width! * iconHeight,
         icon: AppConst.icon,
         iconColor: Colors.white,
-        iconSize: getSizeConfig.getPixels(iconWidth/(5)),
+        iconSize: sizeConfig.getPixels(iconWidth/(5)),
         onPressed: null,
-        gradientColors: [Color(0xffE8AA4F), Color(0xffED5369)],
+        gradientColors: [AppConst.gradientFirst, AppConst.gradientSecond],
         text: '',
         gradientStartDirection: Alignment.topCenter,
         gradientEndDirection: Alignment.bottomCenter,
@@ -357,7 +379,7 @@ class _LoginPageState extends State<LoginPage>
             rightEndIndent: width! * 180,
             dividerColor: Colors.white60,
             fontColor: Colors.white60,
-            fontSize: getSizeConfig.getPixels(18),
+            fontSize: sizeConfig.getPixels(18),
           ),
         ),
         GradientButton(
@@ -387,7 +409,7 @@ class _LoginPageState extends State<LoginPage>
           'Welcome to PureChat',
           style: TextStyle(
               fontFamily: 'Quicksand',
-              fontSize: getSizeConfig.getPixels(18),
+              fontSize: sizeConfig.getPixels(18),
               fontWeight: FontWeight.normal,
               color: Colors.white60),
         ),
@@ -413,7 +435,7 @@ class _LoginPageState extends State<LoginPage>
                 'Login',
                 style: TextStyle(
                     fontFamily: 'PermanentMarker-Regular',
-                    fontSize: getSizeConfig.getPixels(36),
+                    fontSize: sizeConfig.getPixels(36),
                     fontWeight: FontWeight.bold,
                     color: Colors.white),
               ),
@@ -425,20 +447,35 @@ class _LoginPageState extends State<LoginPage>
           padding: EdgeInsets.symmetric(
               horizontal: width! * 60, vertical: height! * 15),
           child: LightTextField(
+            icon: Icons.person_outline,
             controller: username,
             hintText: 'Username',
             enabled: true,
             textColor: Colors.white,
+            focusNode: usernameNode,
           ),
         ),
         Padding(
           padding: EdgeInsets.symmetric(
               horizontal: width! * 60, vertical: height! * 15),
           child: LightTextField(
+            icon: Icons.lock_outline,
             controller: password,
             hintText: 'Password',
             enabled: true,
-            textColor: Colors.white,
+            textColor: Colors.white, focusNode: passwordNode,
+            suffixIcon: IconButton(
+              icon: !isObscure.value!
+                  ? Icon(
+                Icons.visibility,
+                color: AppConst.gradientFirst,
+              )
+                  : Icon(Icons.visibility_off,
+                  color: AppConst.gradientSecond),
+              onPressed: () {
+                isObscure.value = !isObscure.value!;
+              },
+            ),
           ),
         ),
         Padding(
@@ -463,7 +500,7 @@ class _LoginPageState extends State<LoginPage>
                 'Remember Me',
                 style: TextStyle(
                     fontFamily: 'PermanentMarker-Regular',
-                    fontSize: getSizeConfig.getPixels(14),
+                    fontSize: sizeConfig.getPixels(14),
                     fontWeight: FontWeight.bold,
                     color: Colors.white),
               ),
@@ -491,7 +528,7 @@ class _LoginPageState extends State<LoginPage>
             rightEndIndent: width! * 180,
             dividerColor: Colors.white60,
             fontColor: Colors.white60,
-            fontSize: getSizeConfig.getPixels(18),
+            fontSize: sizeConfig.getPixels(18),
           ),
         ),
         Padding(
@@ -502,9 +539,10 @@ class _LoginPageState extends State<LoginPage>
             radius: width! * 100,
             onPressed: () {
             },
-            gradientColors: [Color(0xff596FF3), Color(0xffE34133)],
             text: 'Login with Google',
             textFontFamily: 'PermanentMarker-Regular',
+            borderColor: Colors.white,
+            background: Colors.transparent,
             gradientStartDirection: Alignment.topCenter,
             gradientEndDirection: Alignment.bottomCenter,
           ),
@@ -522,7 +560,7 @@ class _LoginPageState extends State<LoginPage>
           'CREATED BY WALEE,  V 1.0',
           style: TextStyle(
               fontFamily: 'Quicksand',
-              fontSize: getSizeConfig.getPixels(18),
+              fontSize: sizeConfig.getPixels(18),
               fontWeight: FontWeight.normal,
               color: Colors.white60),
         ),

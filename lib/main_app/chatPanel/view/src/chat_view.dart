@@ -2,6 +2,7 @@ part of dash_chat;
 
 /// A complete chat UI which is inspired by [react-native-gifted-chat]
 /// Highly customizable and helps developing chat UI faster
+// ignore: must_be_immutable
 class DashChat extends StatefulWidget {
   /// Flex value for the messeage container defaults to 1
   /// Made so that the message container takes as much as possible
