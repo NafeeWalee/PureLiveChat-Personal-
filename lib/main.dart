@@ -32,7 +32,7 @@ Future<void> main() async {
           fontFamily: 'PermanentMarker-Regular',
           appBarTheme: AppBarTheme(
             elevation: 0,
-            color: AppConst.themePurple,
+            color: AppConst.gradientFirst,
             centerTitle: false,
             iconTheme: IconThemeData(color: Colors.black),
           )),

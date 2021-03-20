@@ -20,6 +20,7 @@ import 'package:pure_live_chat/utility/widgets/lightTextField.dart';
 import 'package:pure_live_chat/utility/widgets/loader.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:pure_live_chat/utility/widgets/loadingScreen.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -54,25 +55,29 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void initState() {
-    super.initState();
-    setInitialScreenSize();
-    convertAssetToFile();
-    nameNode = FocusNode();
-    emailNode = FocusNode();
-    passwordNode = FocusNode();
-    confPassNode = FocusNode();
-    nameNode?.addListener(() {
-      setState(() {});
-    });
-    emailNode?.addListener(() {
-      setState(() {});
-    });
-    passwordNode?.addListener(() {
-      setState(() {});
-    });
-    confPassNode?.addListener(() {
-      setState(() {});
-    });
+    if (!mounted) {
+      return;
+    } else {
+      super.initState();
+      setInitialScreenSize();
+      convertAssetToFile();
+      nameNode = FocusNode();
+      emailNode = FocusNode();
+      passwordNode = FocusNode();
+      confPassNode = FocusNode();
+      nameNode?.addListener(() {
+        setState(() {});
+      });
+      emailNode?.addListener(() {
+        setState(() {});
+      });
+      passwordNode?.addListener(() {
+        setState(() {});
+      });
+      confPassNode?.addListener(() {
+        setState(() {});
+      });
+    }
   }
 
   @override
@@ -138,9 +143,6 @@ class _RegisterPageState extends State<RegisterPage> {
       userType: userType,
     );
     logger.i(hasExceptionOnCreation);
-    setState(() {
-      isLoading = false;
-    });
     if (hasExceptionOnCreation != null) {
       getSnackbar(hasExceptionOnCreation);
     } else {
@@ -148,12 +150,12 @@ class _RegisterPageState extends State<RegisterPage> {
       var hasException = await authController.login(
           emailController.text, passwordController.text, rememberUser);
       if (hasException != null) {
-        setState(() {
-          isLoading = false;
-        });
         getSnackbar(hasException);
       }
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   getSnackbar(hasException) {
@@ -176,55 +178,46 @@ class _RegisterPageState extends State<RegisterPage> {
           onTap: () => FocusScope.of(context).unfocus(),
           child: Scaffold(
             resizeToAvoidBottomInset: false,
-            body: Stack(
-              children: [
-                ImageFiltered(
-                  imageFilter: ImageFilter.blur(sigmaX: 0.0, sigmaY: 0.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                          colors: [Color(0xff1E1E1F), Color(0xff4C4D51)]),
-                    ),
-                    child: Opacity(
-                      opacity: .3,
-                      child: CachedNetworkImage(
-                        height: Get.height,
-                        fit: BoxFit.fill,
-                        imageUrl:
-                            'https://images.unsplash.com/photo-1606613992706-02a0f77643f4?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80',
-                        // 'https://i.pinimg.com/originals/ae/9f/4d/ae9f4dc00d333cf0f5a1d56bb50bcbc7.jpg',
-                        //imageUrl: 'https://cutewallpaper.org/21/naruto-itachi-wallpaper-mobile/Uchiha-Itachi-Itachi-Uchiha-Akatsuki-Naruto-Love-.png',
-                      ),
-                    ),
-                  ),
-                ),
-                IgnorePointer(
-                  ignoring: isLoading ? true : false,
-                  child: Opacity(
-                    opacity: isLoading ? 0.5 : 1,
+            body: IsScreenLoading(
+              isLoading: isLoading,
+              child: Stack(
+                children: [
+                  ImageFiltered(
+                    imageFilter: ImageFilter.blur(sigmaX: 0.0, sigmaY: 0.0),
                     child: Container(
-                      color: isLoading ? Colors.grey[50] : Colors.transparent,
-                      child: Center(
-                        child: SingleChildScrollView(
-                          physics: ClampingScrollPhysics(),
-                          child: Column(
-                            children: [
-                              form(),
-                              SizedBox(
-                                height: sizeConfig.height * 50,
-                              ),
-                              footer()
-                            ],
-                          ),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [Color(0xff1E1E1F), Color(0xff4C4D51)]),
+                      ),
+                      child: Opacity(
+                        opacity: .3,
+                        child: CachedNetworkImage(
+                          height: Get.height,
+                          fit: BoxFit.fill,
+                          imageUrl:
+                              'https://images.unsplash.com/photo-1606613992706-02a0f77643f4?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80',
                         ),
                       ),
                     ),
                   ),
-                ),
-                isLoading ? Loader() : Container(),
-              ],
+                  Center(
+                    child: SingleChildScrollView(
+                      physics: ClampingScrollPhysics(),
+                      child: Column(
+                        children: [
+                          form(),
+                          SizedBox(
+                            height: sizeConfig.height * 50,
+                          ),
+                          footer()
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ));
@@ -254,30 +247,33 @@ class _RegisterPageState extends State<RegisterPage> {
                       height: sizeConfig.width * 250,
                       decoration: BoxDecoration(
                         color: Colors.white,
-                          border: Border.all(color: AppConst.white),
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            image: FileImage(image!),
-                          ),
+                        border: Border.all(color: AppConst.white),
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: FileImage(image!),
+                        ),
                       ),
                     ),
               Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  child: Center(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey.withOpacity(0.6),
-                      ),
-                      child: IconButton(
-                        onPressed: selectPic,
-                        icon: Icon(Icons.camera_alt_outlined,color: AppConst.gradientSecond,),
+                bottom: 0,
+                left: 0,
+                right: 0,
+                top: 0,
+                child: Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.grey.withOpacity(0.6),
+                    ),
+                    child: IconButton(
+                      onPressed: selectPic,
+                      icon: Icon(
+                        Icons.camera_alt_outlined,
+                        color: AppConst.gradientSecond,
                       ),
                     ),
                   ),
+                ),
               ),
             ],
           ),

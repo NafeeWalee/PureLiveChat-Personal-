@@ -92,7 +92,7 @@ class AuthRepo extends GetxController {
 
       if (!isSuccess.isBlank!) {
         await UserProfileDataRepository().getUserData(email, userLoginType,rememberMe);
-        userTypeIdentifier();
+        loginNavigation();
         return null;
       }
     } on FirebaseAuthException catch (eLogin) {
@@ -128,9 +128,21 @@ class AuthRepo extends GetxController {
   }
 
 
-  userTypeIdentifier() async{
+  //TODO add types
+  sessionNavigation(String userLoginType) {
+    print(userDataController.userData.value!.userLoginType);
+    UserSessionModel value = userDataController.sessionData.value!;
+    getData(email: value.email, groupID: value.userGroupID, userType: value.userType, userLoginType: value.userLoginType);
+    if(value.userType == 'member'){
+      // Get.offAll(MemberHomeScreen());
+    }else{
+      //  Get.offAll(AdminHomeScreen());
+    }
+  }
+
+  loginNavigation() async{
     UserModel value = userDataController.userData.value!;
-    await getData(value.email,value.userGroupID,value.userType,value.userLoginType);
+    await getData(email: value.email, groupID: value.userGroupID, userType: value.userType, userLoginType: value.userLoginType);
     if(value.userType == 'member'){
     //  Get.offAll(MemberHomeScreen());
     }else{
@@ -139,20 +151,9 @@ class AuthRepo extends GetxController {
     Get.offAll(()=>HomePage());
   }
 
-  sessionTypeIdentifier() async {
-    UserSessionModel value = userDataController.sessionData.value!;
-    getData(value.email,value.userGroupID,value.userType,value.userLoginType);
-    if(value.userType == 'member'){
-     // Get.offAll(MemberHomeScreen());
-    }else{
-    //  Get.offAll(AdminHomeScreen());
-    }
-    Get.offAll(()=>HomePage());
-  }
-
-  getData(email,groupID,userType,userLoginType) async {
+  getData({email,groupID,userType,userLoginType}) async {
     await UserProfileDataRepository().listenToUserData(email,userLoginType);
-    if(groupID != ''){
+    if(groupID != null){
       await RepoGroupMembers().getGroupData(groupID);
       if(userType == 'admin'){
         await RepoGroupMembers().listenToCheckInData();

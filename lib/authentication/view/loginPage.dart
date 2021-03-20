@@ -32,7 +32,6 @@ class _LoginPageState extends State<LoginPage>
   GetSizeConfig sizeConfig = Get.find();
   double? width;
   double? height;
-  bool _switchValue = false;
   bool? hasConnection;
   Future? _dialog;
   var currentStatus;
@@ -41,9 +40,9 @@ class _LoginPageState extends State<LoginPage>
 
   bool crossFade = true;
 
-  TextEditingController username = TextEditingController();
+  TextEditingController emailAddress = TextEditingController();
   TextEditingController password = TextEditingController();
-  FocusNode? usernameNode;
+  FocusNode? emailAddressNode;
   FocusNode? passwordNode;
   bool rememberMe = false;
   bool isLoading = false;
@@ -56,10 +55,10 @@ class _LoginPageState extends State<LoginPage>
       super.initState();
       setInitialScreenSize();
 
-      usernameNode = FocusNode();
+      emailAddressNode = FocusNode();
       passwordNode = FocusNode();
 
-      usernameNode?.addListener(() {
+      emailAddressNode?.addListener(() {
         setState(() {});
       });
 
@@ -84,10 +83,10 @@ class _LoginPageState extends State<LoginPage>
   @override
   void dispose() {
     _connectivitySubscription?.cancel();
-    username.dispose();
+    emailAddress.dispose();
     password.dispose();
 
-    usernameNode?.dispose();
+    emailAddressNode?.dispose();
     passwordNode?.dispose();
 
     super.dispose();
@@ -229,18 +228,19 @@ class _LoginPageState extends State<LoginPage>
                   ),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(left: width! * 50, right: width! * 50),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    AnimatedCrossFade(
-                        firstChild: upperSide(),
-                        secondChild: loginUpperSide(),
-                        crossFadeState: crossFade?CrossFadeState.showFirst:CrossFadeState.showSecond,
-                        duration: Duration(milliseconds: 200)),
-                    Column(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AnimatedCrossFade(
+                      firstChild: upperSide(),
+                      secondChild: loginUpperSide(),
+                      crossFadeState: crossFade?CrossFadeState.showFirst:CrossFadeState.showSecond,
+                      duration: Duration(milliseconds: 200)),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: width! * 60, vertical: height! * 15),
+                    child: Column(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,6 +250,7 @@ class _LoginPageState extends State<LoginPage>
                           height: height! * 80,
                           radius: width! * 100,
                           onPressed: () async {
+                            FocusScope.of(context).unfocus();
                             if(crossFade){
                               setState(() {
                                 crossFade = !crossFade;
@@ -258,7 +259,7 @@ class _LoginPageState extends State<LoginPage>
                               setState(() {
                                 isLoading = true;
                               });
-                              var hasException =  await AuthRepo().login(username.text, password.text,rememberMe);
+                              var hasException =  await AuthRepo().login(emailAddress.text, password.text,rememberMe);
                               if(hasException != null){
                                 setState(() {
                                   isLoading = false;
@@ -291,16 +292,18 @@ class _LoginPageState extends State<LoginPage>
                         ):SizedBox(),
                       ],
                     ),
-                    AnimatedCrossFade(
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: width! * 60, vertical: height! * 15),
+                    child: AnimatedCrossFade(
                         firstChild: lowerSide(),
                         secondChild: registerLowerSide(),
                         crossFadeState: crossFade?CrossFadeState.showFirst:CrossFadeState.showSecond,
                         firstCurve: Curves.linear,
                         secondCurve: Curves.linear,
                         duration: Duration(milliseconds: 400)),
-                    SizedBox(height: Get.height/120,)
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -448,35 +451,40 @@ class _LoginPageState extends State<LoginPage>
               horizontal: width! * 60, vertical: height! * 15),
           child: LightTextField(
             icon: Icons.person_outline,
-            controller: username,
-            hintText: 'Username',
+            controller: emailAddress,
+            hintText: 'Email Address',
             enabled: true,
             textColor: Colors.white,
-            focusNode: usernameNode,
+            focusNode: emailAddressNode,
+
           ),
         ),
         Padding(
           padding: EdgeInsets.symmetric(
               horizontal: width! * 60, vertical: height! * 15),
-          child: LightTextField(
-            icon: Icons.lock_outline,
-            controller: password,
-            hintText: 'Password',
-            enabled: true,
-            textColor: Colors.white, focusNode: passwordNode,
-            suffixIcon: IconButton(
-              icon: !isObscure.value!
-                  ? Icon(
-                Icons.visibility,
-                color: AppConst.gradientFirst,
-              )
-                  : Icon(Icons.visibility_off,
-                  color: AppConst.gradientSecond),
-              onPressed: () {
-                isObscure.value = !isObscure.value!;
-              },
-            ),
-          ),
+          child:  Obx((){
+            return LightTextField(
+              focusNode: passwordNode!,
+              icon: Icons.lock_outline,
+              controller: password,
+              obscure: isObscure.value!,
+              enabled: true,
+              textColor: Colors.white,
+              hintText: 'Password',
+              suffixIcon: IconButton(
+                icon: !isObscure.value!
+                    ? Icon(
+                  Icons.visibility,
+                  color: AppConst.gradientFirst,
+                )
+                    : Icon(Icons.visibility_off,
+                    color: AppConst.gradientSecond),
+                onPressed: () {
+                  isObscure.value = !isObscure.value!;
+                },
+              ),
+            );
+          })
         ),
         Padding(
           padding: EdgeInsets.symmetric(
@@ -488,10 +496,10 @@ class _LoginPageState extends State<LoginPage>
                 child: CupertinoSwitch(
                   activeColor: Color(0xffE8AA4F),
                   trackColor: Colors.white60,
-                  value: _switchValue,
+                  value: rememberMe,
                   onChanged: (bool value) {
                     setState(() {
-                      _switchValue = value;
+                      rememberMe = value;
                     });
                   },
                 ),
@@ -517,38 +525,33 @@ class _LoginPageState extends State<LoginPage>
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: height! * 20),
-          child: OrDivider(
-            text: 'OR',
-            textStyle: 'Pacifico-Regular',
-            leftIndent: width! * 180,
-            leftEndIndent: width! * 40,
-            rightIndent: width! * 40,
-            rightEndIndent: width! * 180,
-            dividerColor: Colors.white60,
-            fontColor: Colors.white60,
-            fontSize: sizeConfig.getPixels(18),
-          ),
+        OrDivider(
+          text: 'OR',
+          textStyle: 'Pacifico-Regular',
+          leftIndent: width! * 180,
+          leftEndIndent: width! * 40,
+          rightIndent: width! * 40,
+          rightEndIndent: width! * 180,
+          dividerColor: Colors.white60,
+          fontColor: Colors.white60,
+          fontSize: sizeConfig.getPixels(18),
+        ),
+        GradientButton(
+          width: width! * 1000,
+          height: height! * 80,
+          radius: width! * 100,
+          onPressed: () {
+
+          },
+          text: 'Login with Google',
+          textFontFamily: 'PermanentMarker-Regular',
+          borderColor: Colors.white,
+          background: Colors.transparent,
+          gradientStartDirection: Alignment.topCenter,
+          gradientEndDirection: Alignment.bottomCenter,
         ),
         Padding(
-          padding: EdgeInsets.symmetric(vertical: height! * 20),
-          child: GradientButton(
-            width: width! * 1000,
-            height: height! * 80,
-            radius: width! * 100,
-            onPressed: () {
-            },
-            text: 'Login with Google',
-            textFontFamily: 'PermanentMarker-Regular',
-            borderColor: Colors.white,
-            background: Colors.transparent,
-            gradientStartDirection: Alignment.topCenter,
-            gradientEndDirection: Alignment.bottomCenter,
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: height! * 20),
+          padding: EdgeInsets.symmetric(vertical: height! * 10),
           child: Divider(
             color: Colors.white60,
             indent: width! * 100,

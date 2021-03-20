@@ -1,28 +1,29 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pure_live_chat/authentication/repo/authRepo.dart';
+import 'package:pure_live_chat/authentication/view_model/userDataController.dart';
 import 'package:pure_live_chat/main_app/chatPanel/view/chatPanel.dart';
 import 'package:pure_live_chat/utility/resources/appConst.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
+  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
+  UserDataController userDataController = Get.find();
   @override
   void initState() {
     super.initState();
   }
-
   bool myDay = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _drawerKey,
+      key: scaffoldKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
         leadingWidth: Get.width / 10,
@@ -35,7 +36,11 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.white,
               ),
               onPressed: () {
-                _drawerKey.currentState!.openDrawer();
+                if(scaffoldKey.currentState!.isDrawerOpen){
+                  scaffoldKey.currentState!.openEndDrawer();
+                }else{
+                  scaffoldKey.currentState!.openDrawer();
+                }
               }),
         ),
         title: Text('Pure Live'),
@@ -49,7 +54,108 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {}),
         ],
       ),
-      drawer: Drawer(),
+      drawer: Drawer(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+                width: Get.width,
+                height: Get.height/3,
+                decoration: BoxDecoration(
+                  color: AppConst.gradientFirst
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 12,),
+                    Padding(
+                      padding: const EdgeInsets.all(14),
+                      child: Container(
+                        width: Get.width/4,
+                        height: Get.width/4,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppConst.gradientSecond),
+                          color: Colors.white,
+                        shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: CachedNetworkImageProvider(
+                                userDataController.userData.value!.userPhoto!
+                            )
+                          )
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left:14,bottom: 10),
+                      child: Text('${userDataController.userData.value!.userName}',style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.normal),),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left:14,bottom: 10),
+                      child: Text('${userDataController.userData.value!.email}',style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.normal),),
+                    ),
+                    GestureDetector(
+                      onTap: (){},
+                      child: Padding(
+                        padding: const EdgeInsets.only(left:14,bottom: 10),
+                        child: Text('View Profile',style: TextStyle(color: AppConst.gradientSecond,fontSize: 16,fontWeight: FontWeight.normal),),
+                      ),
+                    ),
+                  ],
+                )
+            ),
+            TextButton(
+              onPressed: (){
+
+              },
+              child: ListTile(
+                leading: Icon(Icons.group_outlined,color: AppConst.gradientSecond,),
+                title: Text('Friends'),
+              ),
+
+            ),
+            TextButton(
+              onPressed: (){
+
+              },
+              child: ListTile(
+                leading: Icon(Icons.help_outline,color: AppConst.gradientSecond),
+                title: Text('Helpline'),
+              ),
+
+            ),
+            TextButton(
+              onPressed: (){
+
+              },
+              child: ListTile(
+                title: Text('Settings'),
+              ),
+
+            ),
+            TextButton(
+              onPressed: (){
+
+              },
+              child: ListTile(
+                title: Text('Terms & Conditions/Privacy'),
+              ),
+
+            ),
+            TextButton(
+              onPressed: (){
+                AuthRepo().signOut();
+              },
+              child: ListTile(
+                leading: Icon(Icons.exit_to_app_outlined,color: AppConst.gradientSecond),
+                title: Text('Logout'),
+              ),
+
+            ),
+
+          ],
+        ),
+      ),
       body: Padding(
         padding: EdgeInsets.only(left: Get.width / 20),
         child: SingleChildScrollView(
@@ -119,7 +225,7 @@ class _HomePageState extends State<HomePage> {
           width: Get.width / 7,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: AppConst.themePurple,
+            color: AppConst.gradientFirst,
           ),
           child: Center(
             child: IconButton(
@@ -194,7 +300,7 @@ class _HomePageState extends State<HomePage> {
               height: Get.width / 15,
               width: Get.width / 12,
               decoration:
-              BoxDecoration(color: AppConst.themePurple),
+              BoxDecoration(color: AppConst.gradientFirst,),
               child: Center(
                 child: Text(
                   '3',
@@ -215,7 +321,7 @@ class _HomePageState extends State<HomePage> {
       width: Get.width / 7,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: AppConst.themePurple,
+        color: AppConst.gradientSecond,
       ),
       child: Stack(
         children: [
@@ -226,8 +332,8 @@ class _HomePageState extends State<HomePage> {
               width: Get.width / 7,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.black, width: myDay == null?0:3),
-                color: AppConst.themePurple,
+                border: Border.all(color: AppConst.gradientSecond, width: myDay == null?0:3),
+                color: AppConst.gradientFirst,
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image: CachedNetworkImageProvider(
